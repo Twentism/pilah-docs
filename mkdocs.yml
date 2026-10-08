@@ -90,6 +90,7 @@ nav:
   - How I work:
       - process/index.md
       - TDD: process/tdd.md
+      - Programming principles: process/programming.md
       - Security: process/security.md
       - Peer review: process/peer-review.md
       - Code quality: process/quality.md

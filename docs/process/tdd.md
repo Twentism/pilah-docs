@@ -48,6 +48,78 @@ flutter test test/features/main/role_navigation_test.dart   -> 15 lulus, tidak a
 flutter analyze lib/design/layout test/design/layout        -> No issues found
 ```
 
+## Positive, negative, corner — one each
+
+The rubric asks for all three per feature. Taking PIL-293's navigation form as
+the feature, here is exactly one of each, so the distinction is concrete rather
+than asserted.
+
+=== "Positive"
+
+    The expected path, with valid input.
+
+    ```dart
+    test('a desktop window gets the labelled rail', () {
+      expect(
+        NavigationForm.resolve(isWeb: true, width: 1440),
+        NavigationForm.railExtended,
+      );
+    });
+    ```
+
+    A browser at a normal desktop size gets the labelled rail. If only this
+    kind of test existed, the feature would look finished and be wrong in
+    three other places.
+
+=== "Negative"
+
+    Invalid or unrecognised input, where the right answer is a refusal.
+
+    ```dart
+    test('an unknown role gets nothing rather than a default menu', () {
+      expect(RoleDestinations.forRole('satpam'), isEmpty);
+    });
+    ```
+
+    An unrecognised role gets an empty list, **not** the staff menu. The
+    negative case is the one with security weight: the dangerous failure here
+    is not a crash, it is a helpful default.
+
+=== "Corner"
+
+    Valid input sitting exactly on a decision boundary.
+
+    ```dart
+    test('the drawer-to-rail boundary belongs to the rail', () {
+      expect(NavigationForm.resolve(isWeb: true, width: 599),
+          NavigationForm.drawer);
+      expect(NavigationForm.resolve(isWeb: true, width: 600),
+          NavigationForm.railCollapsed);
+    });
+    ```
+
+    599 and 600 are both ordinary widths; what makes this a corner case is that
+    the answer changes between them. A test at 400 and 1400 passes whether the
+    comparison is `>` or `>=`. This one does not.
+
+### How I find the corner cases
+
+Not by intuition — by asking three questions of each input:
+
+1. **Where does the answer change?** Every `if` and every comparison is a
+   boundary. Test the last value on each side, not a comfortable value in the
+   middle.
+2. **What is the smallest or emptiest valid input?** Zero weight, an empty
+   destination list, a width of `0` before the first frame has measured the
+   window.
+3. **What does the type allow that the domain does not?** `double` permits a
+   negative width; the domain does not. That produced a deliberate decision —
+   return the narrowest form rather than throw, because the caller should not
+   have to guard a transient startup state.
+
+On PIL-293 that third question is what surfaced the degenerate-width case, and
+question 1 is what produced the on-point/off-point table below.
+
 ## Boundary testing, not sample testing
 
 Where an input is continuous, I partition it and test the boundaries rather

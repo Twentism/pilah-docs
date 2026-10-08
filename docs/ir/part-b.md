@@ -45,9 +45,17 @@ render path. That is checkable rather than asserted: the bar's `build()` output
 is byte-for-byte unchanged in that commit, and the 18 existing navigation tests
 passed with none of them edited.
 
+**Strategy** and **Dependency Inversion** also apply — one pure selector with
+three interchangeable renderers, and a `@visibleForTesting` platform seam
+without which the whole web branch would be untestable.
+
 The ordering is the evidence. I extracted the shared source in its own
-red-green pair *before* writing the rail, specifically so the second form could
-be added additively. Both commit bodies say which principle applies and why.
+red-green pair *before* writing the rail and the drawer, specifically so each
+new form could be added additively. Both commit bodies say which principle
+applies and why.
+
+Full write-up with commit links, including what I deliberately do **not**
+claim: [Programming principles](../process/programming.md).
 
 ## B3 · Development discipline
 
@@ -119,7 +127,14 @@ not prove the application starts.
 
 ## B6 · Security
 
-**Claim.** OWASP Top 10 item named in the **commit message body**.
+**Claim.** OWASP Top 10 items named in the **commit message body**.
+
+**Level, stated honestly.** The criterion scores by *count*: one item is level
+1, **five** is level 2, and levels 3–4 need a Metasploit-style scan that this
+project does not yet use. PIL-293 names A01 only, so it is level 1. The five-item
+case arrives with PIL-340, where the feature touches money — planned in advance
+and marked for what I wrote versus what I am citing, in
+[Security](../process/security.md).
 
 OWASP **A01 (Broken Access Control)** appears in five PIL-293 commits — both
 `RoleDestinations` commits, both navigation rail commits, and the navigation

@@ -124,6 +124,43 @@ Kept here because self-correction is cheap to claim and easy to check.
   text is in the widget tree but unpainted. It deleted the test rather than keep
   a false guarantee.
 
+## Counting the corrections
+
+Anecdotes do not show a pattern. Tallying the same corrections by *cause*
+does, and the tally is what changed how I work rather than any single
+incident.
+
+| Cause | Count | Incidents |
+|---|---|---|
+| Claimed verified, verification too narrow | 3 | blank page from clean logs (×2), "all nine failures pre-existing", content-cap screenshot |
+| Inferred instead of checked directly | 2 | merge conflict never tested, tool called deprecated from its version number |
+| Requirement known but not built into planning | 2 | OWASP missing from commits on PIL-168, then again on PIL-293 |
+| Claim stronger than the evidence | 2 | PR split "required" by the rubric, Android build "blocked" |
+
+**What the counts say.** Seven of nine sit in the top two rows, and both rows
+are the same underlying mistake: a conclusion reached by inference when direct
+evidence was one command away. That is a bigger share than I expected, and it
+is not a knowledge problem — the checks were all cheap.
+
+**What changed as a result**, in order of how much each has caught:
+
+1. **Screenshots replaced log tails** for anything user-visible. Directly
+   caused by the blank-page incidents; it is also what caught the collapsed
+   rail having no labels.
+2. **"Verified" must name its scope.** After the nine-failures miss, a claim
+   now says *which* files were run, which is what would have exposed that two
+   of them were untested.
+3. **The OWASP item is chosen at slice-planning time**, not at commit time.
+   Two misses with the same shape meant the remedy had to move earlier in the
+   process, not be applied harder at the end.
+4. **Plans written before the work, not after.** The
+   [programming principles](../process/programming.md) page states what PIL-340
+   will claim *before* its commits exist, so the claim can be checked against
+   them rather than reverse-engineered from them.
+
+Row three is the one still open: it has recurred once already, and one
+successful application is not yet evidence the fix holds.
+
 ## What I take from this
 
 Every one of these came from a conclusion that was **cheap to check directly

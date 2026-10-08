@@ -5,6 +5,29 @@ body**, not only in the PR description. Two of my tickets have a genuine
 security argument; the rest do not, and I would rather say so than manufacture
 one.
 
+## What the rubric actually asks for
+
+Worth stating plainly, because I had this wrong. The Part B security criterion
+is scored by **how many** of the OWASP Top 10 the code demonstrably prevents,
+named in the commit message:
+
+| Level | Requirement |
+|---|---|
+| 1 | Code preventing **1** of the Top 10, named in the commit message |
+| 2 | Code preventing **at least 5** of the 10, named in the commit messages |
+| 3 | A scan with Metasploit or similar, explained, with a patch plan |
+| 4 | Penetration testing with video evidence that the system is secure |
+
+PIL-293 names **A01 only**, so on its own it sits at level 1. Reaching level 2
+needs five, and levels 3 and 4 need a scanning tool that nothing in this
+project currently uses — no amount of careful commit writing substitutes for
+it.
+
+Note the wording: *"has shown some/all of the code that **already** prevents"*.
+Pointing at existing protections counts, not only at code written this week. So
+below I mark what I wrote against what I am citing, because those are different
+claims.
+
 ## A01 — Broken Access Control
 
 ### PIL-293: one source of truth for role-to-destination mapping
@@ -68,6 +91,26 @@ Not an OWASP item as such, but it is where mistakes are cheapest to make:
   working around it.
 - Local QA runs with a permissive CORS setting and a fake-Google-token flag.
   Both are development-only and documented as such, not as defaults.
+
+## The five for PIL-340
+
+PIL-340 (setoran recording on web) is where a level-2 claim becomes honest,
+because the feature touches money. Planned, with my confidence in each:
+
+| OWASP | What prevents it | Strength |
+|---|---|---|
+| **A01** Broken Access Control | `TransaksiBaruPage` is in the router's `staffPaths` set, so a nasabah is redirected before it loads; destinations come from `RoleDestinations`, which fails closed | strong — *mine* |
+| **A04** Insecure Design | The server fills each item's price from the master *jenis sampah* record. The client's form total is display only and is never trusted as the amount | strong — *cited*, from PIL-168 |
+| **A08** Data Integrity Failures | The success screen shows the server's returned `totalNilai` and `saldoSetelah`, not the form's own arithmetic, so a client-side rounding slip cannot misreport a balance | strong — *mine* |
+| **A05** Security Misconfiguration | Demo login is compiled out of release builds (`supportsDemoLogin => !kReleaseMode && ...`), so test accounts cannot exist in production | real — *cited* |
+| **A07** Authentication Failures | A web session whose role is not web-supported is logged out with a warning rather than shown a broken page | real — *cited* |
+
+**What I am not claiming.** A03 (Injection) has no honest frontend story here:
+Flutter renders text as text with no HTML sink, and the client sends typed JSON
+through Dio rather than building queries. The real injection surface is
+server-side and is not mine this ticket. A02, A06, A09 and A10 have nothing to
+do with this feature. Five is what the evidence supports; padding to ten would
+be the kind of claim a grader is right to knock down.
 
 ## Where I slipped
 

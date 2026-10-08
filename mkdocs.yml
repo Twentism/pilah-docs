@@ -1,0 +1,105 @@
+# ---------------------------------------------------------------------------
+# PILAH 2.0 — personal engineering documentation
+#
+# EDITING THE LOOK
+#   Colours live in docs/stylesheets/extra.css, in one block at the top.
+#   Change them there, not here. This file controls structure and behaviour.
+#   The light/dark toggle below picks WHICH palette is active, not the colours.
+# ---------------------------------------------------------------------------
+
+site_name: PILAH 2.0 — Melanton Gabriel
+site_description: Personal engineering documentation for the PILAH 2.0 project (PPL, Fasilkom UI)
+site_author: Melanton Gabriel Siregar
+site_url: https://twentism.github.io/pilah-docs/
+
+repo_url: https://github.com/Twentism/pilah-docs
+repo_name: Twentism/pilah-docs
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs          # top-level sections become tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+  palette:
+    # Light mode. "pilah" is the custom scheme defined in extra.css.
+    - media: "(prefers-color-scheme: light)"
+      scheme: pilah
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Dark mode.
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+
+nav:
+  - Overview: index.md
+  - Contributions:
+      - contributions/index.md
+      - Sprint 1: contributions/sprint-1.md
+      - Sprint 2: contributions/sprint-2.md
+      - PIL-293 case study: contributions/pil-293.md
+  - How I work:
+      - process/index.md
+      - TDD: process/tdd.md
+      - Security: process/security.md
+      - Peer review: process/peer-review.md
+      - Code quality: process/quality.md
+  - IR evidence:
+      - ir/index.md
+      - Part B — hard skills: ir/part-b.md
+      - Part C — soft skills: ir/part-c.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Twentism
+  generator: false

@@ -1,0 +1,105 @@
+/* ==========================================================================
+   EDIT YOUR COLOURS HERE — this block is the only part you need to touch.
+   Every colour on the site comes from these variables. Change a value,
+   reload, done. Hex codes, rgb(), or colour names all work.
+   ========================================================================== */
+
+[data-md-color-scheme="pilah"] {
+  /* --- the two you will most likely want to change ---------------------- */
+  --pilah-bg:            #f7f9f8;   /* page background                      */
+  --pilah-brand:         #2e7d5b;   /* header, links, accents (PILAH green) */
+
+  /* --- supporting colours ---------------------------------------------- */
+  --pilah-bg-card:       #ffffff;   /* cards, code blocks, tables           */
+  --pilah-text:          #1b1f1d;   /* body text                            */
+  --pilah-text-muted:    #5c6661;   /* captions, table headers              */
+  --pilah-border:        #dde5e1;   /* hairlines and table borders          */
+  --pilah-brand-dark:    #1f5a41;   /* hover states, header gradient end    */
+  --pilah-accent:        #d98324;   /* highlights, "current" nav item       */
+
+  /* --- admonition tints (the coloured callout boxes) -------------------- */
+  --pilah-note:          #3b7ea1;
+  --pilah-warning:       #c07a1b;
+  --pilah-danger:        #b4452f;
+  --pilah-success:       #2e7d5b;
+
+  /* ====================================================================== */
+  /* Below here the variables are wired into Material. You can ignore it.   */
+  /* ====================================================================== */
+  --md-default-bg-color:        var(--pilah-bg);
+  --md-default-fg-color:        var(--pilah-text);
+  --md-default-fg-color--light: var(--pilah-text-muted);
+  --md-default-fg-color--lighter: var(--pilah-border);
+  --md-default-fg-color--lightest: var(--pilah-border);
+
+  --md-primary-fg-color:        var(--pilah-brand);
+  --md-primary-fg-color--dark:  var(--pilah-brand-dark);
+  --md-primary-fg-color--light: var(--pilah-brand);
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+
+  --md-accent-fg-color:         var(--pilah-accent);
+  --md-accent-fg-color--transparent: rgba(217, 131, 36, 0.1);
+
+  --md-typeset-color:           var(--pilah-text);
+  --md-typeset-a-color:         var(--pilah-brand);
+
+  --md-code-bg-color:           var(--pilah-bg-card);
+  --md-code-fg-color:           var(--pilah-text);
+
+  --md-footer-bg-color:         var(--pilah-brand-dark);
+  --md-footer-bg-color--dark:   var(--pilah-brand-dark);
+
+  color-scheme: light;
+}
+
+/* --------------------------------------------------------------------------
+   Small layout touches. Delete any rule you do not want.
+   -------------------------------------------------------------------------- */
+
+/* Cards and code blocks sit on a surface, not flat on the background. */
+[data-md-color-scheme="pilah"] .md-typeset pre > code,
+[data-md-color-scheme="pilah"] .md-typeset table:not([class]) {
+  background: var(--pilah-bg-card);
+  border: 1px solid var(--pilah-border);
+  border-radius: 6px;
+}
+
+/* Table headers: muted, not shouty. */
+[data-md-color-scheme="pilah"] .md-typeset table:not([class]) th {
+  background: var(--pilah-bg);
+  color: var(--pilah-text-muted);
+  font-weight: 600;
+}
+
+/* Readable measure for long prose. Raise if you prefer wider text. */
+.md-grid {
+  max-width: 1180px;
+}
+
+/* Blockquotes become a quiet left-rule instead of a grey slab. */
+[data-md-color-scheme="pilah"] .md-typeset blockquote {
+  border-left: 3px solid var(--pilah-brand);
+  color: var(--pilah-text-muted);
+}
+
+/* The status chips used in the contribution tables (see index.md). */
+.chip {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.chip-merged { background: rgba(46, 125, 91, 0.12);  color: #2e7d5b; }
+.chip-open   { background: rgba(217, 131, 36, 0.14); color: #a8641a; }
+.chip-review { background: rgba(59, 126, 161, 0.12); color: #2f6480; }
+
+/* Dark mode keeps Material's "slate" but borrows the brand colour. */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:  #2e7d5b;
+  --md-accent-fg-color:   #d98324;
+  --md-typeset-a-color:   #6ec49b;
+}

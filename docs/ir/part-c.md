@@ -111,8 +111,12 @@ one I did.
 ## AI literacy
 
 I use Claude Code as a working tool, and the useful part is not the generation —
-it is being a reviewer of output that is confidently wrong sometimes. Several
-corrections above came from me pushing back: the non-existent merge conflict,
-the "deprecated" tool, an overstated rationale for splitting PRs into three. The
-prompt history is kept for exactly this reason, so the places where a claim was
-challenged are visible rather than smoothed over.
+it is being a reviewer of output that is confidently wrong sometimes.
+
+The full record is on its own page: **[AI literacy — session
+history](ai-literacy.md)**. It lists the corrections with my actual prompts —
+the blank page reported as working, the non-existent PR number, the rubric
+misread in the tool's favour, and the lead dev's platform rule beating a
+technically correct elaboration. The prompt history is kept for exactly this
+reason, so the places where a claim was challenged stay visible rather than
+being smoothed over.

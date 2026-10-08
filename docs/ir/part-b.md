@@ -5,7 +5,7 @@
 **Claim.** Disciplined red-green-refactor, visible in the commit history, with
 positive, negative and boundary cases.
 
-**Evidence.** [PR #70's 22 commits](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/70/commits).
+**Evidence.** [PR #70's 31 commits](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/70/commits) — 13 `red`, 13 `green`, 4 `refactor`, 1 `test`.
 Every cycle is two commits: the failing test, then the smallest change that
 passes it. Test and implementation are never in the same commit, because if they
 were, nobody could tell which came first.
@@ -57,7 +57,7 @@ than two meaningful MRs per week.
 | | |
 |---|---|
 | Merged PRs | 5 backend, 3 mobile |
-| Open | 1 (PR #70) |
+| Open | 1 (PR #70), 31 commits |
 | Commit style | `red/green/refactor(scope): subject`, body explains *why* |
 | PR titles | `PIL-<n>: <short imperative>` |
 
@@ -109,7 +109,7 @@ issues.
 | `flutter analyze lib test` | No issues found |
 | `dart format --set-exit-if-changed` | 512 files, 0 changed |
 | SonarCloud, `feature/pil-293` | pass |
-| CI full suite | 1338 pass, 1 skip, 0 fail |
+| CI full suite | 1358 pass, 1 skip, 0 fail |
 
 Backend equivalents: `ruff`, `ruff format`, `mypy` strict, and
 `makemigrations --check`.
@@ -121,14 +121,14 @@ not prove the application starts.
 
 **Claim.** OWASP Top 10 item named in the **commit message body**.
 
-OWASP **A01 (Broken Access Control)** appears in four PIL-293 commits — both
-`RoleDestinations` commits and both navigation rail commits. The other eighteen
-have no security angle and do not claim one.
+OWASP **A01 (Broken Access Control)** appears in five PIL-293 commits — both
+`RoleDestinations` commits, both navigation rail commits, and the navigation
+drawer. The other twenty-six have no security angle and do not claim one.
 
 The substance: one source of truth for role-to-destination mapping, so adding a
-second navigation surface cannot widen any role's menu; `forRole` fails closed
-on unknown roles; the rail renders nothing without a session. All three are
-pinned by tests.
+second *or third* navigation surface cannot widen any role's menu; `forRole`
+fails closed on unknown roles; rail and drawer both render nothing without a
+session. All of it is pinned by tests.
 
 Each message states that this is **defense in depth** and names where the real
 control lives — server-side authorization plus the router redirect.

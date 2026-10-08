@@ -15,13 +15,14 @@ Responsive layout and the web navigation shell. Full write-up in the
 on this project and worth reading as one piece.
 
 Short version: the app had exactly one navigation form, a bottom bar, which is
-right on a phone and wrong on a 1440px monitor. PIL-293 adds window-width
-classes, a navigation rail for wide windows, a content width cap, and two
-layout primitives the other web tickets will reuse.
+right on a phone and wrong on a 1440px monitor. PIL-293 makes the platform
+decide — bottom bar in the app, left-hand navigation in a browser — adds a
+navigation rail and a drawer for narrow browsers, caps the content width, and
+ships two layout primitives the other web tickets will reuse.
 
 <span class="chip chip-open">open</span>
 [PR #70](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/70) ·
-22 commits · base `staging`
+31 commits · base `staging` · all checks green
 
 ## What made this sprint harder than Sprint 1
 
@@ -50,6 +51,21 @@ log tails while the page was actually blank.
     errors. The page was white. A clean log is not a rendered page. Since then
     I verify with a screenshot of the actual UI, never a log tail. It is in
     here because it changed how I work, not because it is flattering.
+
+## A rule that arrived mid-ticket
+
+My first implementation chose the navigation form from window width alone. My
+lead dev then set the rule out plainly: **in the app the navigation is at the
+bottom, in a browser it is on the left.**
+
+That turned out to matter more than a styling preference. Width alone was wrong
+in both directions — a native phone in landscape is 844px wide and lost its
+bottom bar, and a browser narrowed below 600 grew one. Switching the decision
+to `kIsWeb` fixed both, and let me delete a whole layer of viewport workarounds
+from the test suite that had only existed to paper over the wrong decision.
+
+Narrow browsers needed a third form, so they now get a menu button and a
+drawer. Details in the [case study](pil-293.md).
 
 ## A defect I found and reported but did not fix
 

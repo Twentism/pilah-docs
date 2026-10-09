@@ -67,6 +67,7 @@ than asserted.
     });
     ```
 
+    [`navigation_form.dart`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/design/layout/navigation_form.dart#L26-L35).
     A browser at a normal desktop size gets the labelled rail. If only this
     kind of test existed, the feature would look finished and be wrong in
     three other places.
@@ -81,6 +82,7 @@ than asserted.
     });
     ```
 
+    [`role_destinations.dart`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/widgets/role_destinations.dart#L36-L46).
     An unrecognised role gets an empty list, **not** the staff menu. The
     negative case is the one with security weight: the dangerous failure here
     is not a crash, it is a helpful default.
@@ -106,8 +108,8 @@ than asserted.
 
 PIL-293's examples are about layout. These are about a rule that moves money,
 so the stakes read differently. All three come from
-`test/features/transaksi/domain/setoran_draft_test.dart`, which builds no
-widget at all.
+[`setoran_draft_test.dart`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/domain/setoran_draft_test.dart),
+which builds no widget at all — [positive](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/domain/setoran_draft_test.dart#L26-L31), [negative](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/domain/setoran_draft_test.dart#L67-L73), [corner](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/domain/setoran_draft_test.dart#L101-L113).
 
 === "Positive"
 
@@ -215,21 +217,38 @@ The rubric asks which tests use mocks or stubs. The more useful answer is
 *which layer* each one fakes, because that decides what the test can still
 catch.
 
+!!! abstract "The difference, in plain terms"
+    A **stub** is a stand-in that *answers*. You wire it in, it hands back a
+    prepared reply, and you judge the result by looking at what the app did
+    next. A pretend shopkeeper who always sells you the same loaf.
+
+    A **mock** is a stand-in that *remembers*. You wire it in, let the app use
+    it, and then ask it what it was told to do. A pretend shopkeeper who writes
+    down everything you ordered so you can check the list afterwards.
+
+    Same idea — something fake standing where the real thing goes. The
+    difference is where you look for the answer: at the app, or at the fake.
+
 ### Level 0 — no double at all
 
-`test/features/transaksi/domain/setoran_draft_test.dart`, 14 tests.
+[`setoran_draft_test.dart`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/domain/setoran_draft_test.dart),
+14 tests.
 
-`SetoranDraft` has no collaborators: it takes values and answers questions
-about them. Nothing to fake, so nothing is faked.
+**Practically:** nothing is faked. The test hands the rule a nasabah and some
+weights and checks the verdict, the way you would check a calculator.
 
-**Implication.** These tests are fast and cannot rot, because there is no seam
-to drift. They also prove nothing about wiring — a perfectly correct
-`SetoranDraft` that no page ever calls would pass all 14. That is exactly why
-slice 1 was followed by a page test asserting no request was sent.
+[`SetoranDraft`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/lib/features/transaksi/domain/entities/setoran_draft.dart)
+has no collaborators: it takes values and answers questions about them.
+Nothing to fake, so nothing is faked.
+
+**Implication.** Fast, and they cannot rot — there is no seam to drift. They
+also prove nothing about wiring: a perfectly correct `SetoranDraft` that no
+page ever calls would pass all 14. That is exactly why slice 1 was followed by
+a page test asserting no request was sent.
 
 ### Level 1 — a stub at the transport boundary
 
-`test/support/stub_api.dart:53`:
+[`stub_api.dart:53`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/support/stub_api.dart#L53-L85):
 
 ```dart
 class StubApi implements HttpClientAdapter {
@@ -240,12 +259,18 @@ class StubApi implements HttpClientAdapter {
 }
 ```
 
-This is a **stub**, not a mock: it returns canned answers and records what it
-was asked, but no test asserts "this method was called on it". It replaces
-Dio's `HttpClientAdapter` — the lowest layer in the app, the thing that would
+**Practically: a pretend server.** The app genuinely builds its request, fills
+in the headers, and sends it. The request simply never leaves the machine — a
+canned reply we wrote is handed back instead. Everything the app does on the
+way out and on the way back is the real code.
+
+This is a **stub**, not a mock: it answers, and it keeps a note of what it was
+asked, but no test ever interrogates *it*. It replaces Dio's
+`HttpClientAdapter`, the lowest layer in the app — the part that would
 otherwise open a socket.
 
-Everything above it is real. `test/support/transaksi_support.dart:13`:
+Everything above it is real.
+[`transaksi_support.dart:13`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/support/transaksi_support.dart#L13-L23):
 
 ```dart
 TransaksiCubit buildTransaksiCubit(StubApi api) {
@@ -261,7 +286,7 @@ TransaksiCubit buildTransaksiCubit(StubApi api) {
 ```
 
 So a page test exercises the genuine cubit, use case, repository, data source
-and serialisation. Only the socket is fake.
+and JSON serialisation. Only the socket is fake.
 
 **Implication, and the reason this is the default here.** Assertions are about
 *state and traffic*, not about calls:
@@ -282,7 +307,7 @@ the widget under test. On this project they have repeatedly earned it.
 
 ### Level 2 — a mock, for a side effect that leaves the app
 
-`test/features/transaksi/presentation/pages/transaksi_baru_page_test.dart:33`:
+[`transaksi_baru_page_test.dart:33`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/presentation/pages/transaksi_baru_page_test.dart#L33-L35):
 
 ```dart
 class _MockUrlLauncher extends Mock
@@ -290,7 +315,16 @@ class _MockUrlLauncher extends Mock
     implements UrlLauncherPlatform {}
 ```
 
-installed at `:63` and verified at `:441` and `:506`:
+**Practically: a stand-in that keeps the receipt.** A test cannot really open
+WhatsApp, so we put a fake in its place, let the app press the button, and
+afterwards ask the fake: *were you told to open a link, and which one?*
+
+Installed at
+[`:63`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/presentation/pages/transaksi_baru_page_test.dart#L63)
+and interrogated at
+[`:441`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/presentation/pages/transaksi_baru_page_test.dart#L441-L443)
+and
+[`:506`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/presentation/pages/transaksi_baru_page_test.dart#L506-L508):
 
 ```dart
 final launched = verify(() => launcher.launchUrl(captureAny(), any()))
@@ -300,20 +334,21 @@ expect(launched, contains('Botol'));
 ```
 
 Opening WhatsApp hands control to another application. There is no resulting
-state inside the app to inspect, so the only observable fact is *that the call
+state inside our app to inspect, so the only observable fact is *that the call
 happened, with this URL*. That is behaviour verification, and a mock is the
 right tool for it.
 
 **Implication.** This test is coupled to the shape of the call. Change
 `launchUrl`'s signature, or route the deeplink through a wrapper, and it breaks
-even though the behaviour is identical. That is the price of asserting on a
-call rather than a result, and it is worth paying only where there is no result
-to assert on.
+even though the behaviour is identical. That is the price of asking the fake
+instead of looking at the result, and it is worth paying only where there is no
+result to look at.
 
 ### Level 3 — a mock to reach a state the stub cannot produce
 
-`test/features/transaksi/presentation/widgets/pilih_nasabah_flow_test.dart:15`,
-used at `:121`:
+[`pilih_nasabah_flow_test.dart:15`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/presentation/widgets/pilih_nasabah_flow_test.dart#L15-L16),
+used at
+[`:121`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/presentation/widgets/pilih_nasabah_flow_test.dart#L120-L129):
 
 ```dart
 final broken = _MockNasabahCubit();
@@ -323,9 +358,14 @@ when(() => broken.loadActiveNasabah())
     .thenAnswer((_) async => throw StateError('rusak'));
 ```
 
-`StubApi` can return a 403, a 500, or malformed JSON — all of which arrive as
-`NetworkException`. It cannot produce a bare `StateError`, because that is not
-something a transport returns. The picker has a branch for exactly that case:
+**Practically: a stand-in told to break on purpose.** We want to see what the
+screen shows when something fails in a way the network never fails, so we swap
+in a component instructed to throw.
+
+The pretend server can return a 403, a 500, or malformed JSON — all of which
+arrive as `NetworkException`. It cannot produce a bare `StateError`, because
+that is not a thing a transport returns. The picker has a branch for exactly
+that case:
 
 ```dart
 error is NetworkException ? error.displayMessage : error.toString()
@@ -351,14 +391,15 @@ catches an integration bug — the three worst properties a test can have.
 !!! note "Both kinds, in one test"
     The WhatsApp-snapshot test needs a request held open mid-flight, and needs
     to see which URL was launched. The stub supplies the first
-    (`api.latency = const Duration(seconds: 1)`, a realistic in-flight window
-    at the transport layer); the mock supplies the second. They are not
-    alternatives — they answer different questions.
+    (`api.latency = const Duration(seconds: 1)` — the pretend server answering
+    slowly on purpose); the mock supplies the second. They are not
+    alternatives, they answer different questions.
 
 ### A double that made a test lie
 
 `StubApi` is not the only fake in play. The WhatsApp template comes from
-`stubProfile`, whose default is:
+[`profile_support.dart:37`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/support/profile_support.dart#L34-L40),
+whose default is:
 
 ```dart
 'template': 'Halo {nama}'

@@ -110,7 +110,7 @@ first is that they can come out wrong, and one did.
 
 | Claim | Outcome |
 |---|---|
-| **SRP** | **Held.** `SetoranDraft` / `SetoranItemDraft` carry the rules, tested by 14 unit tests with no widget built at all. It also caught a real bug: `num.tryParse('') ?? 0.0` means clearing the weight box yields 0, and nothing stopped that 0 kg setoran reaching the server. |
+| **SRP** | **Held.** [`SetoranDraft`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/lib/features/transaksi/domain/entities/setoran_draft.dart) / `SetoranItemDraft` carry the rules, tested by [14 unit tests](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/test/features/transaksi/domain/setoran_draft_test.dart) with no widget built at all. It also caught a real bug: `num.tryParse('') ?? 0.0` means clearing the weight box yields 0, and nothing stopped that 0 kg setoran reaching the server. |
 | **OCP** | **Held in substance, refuted in detail.** `TransaksiCubit`, `ItemSetoranCard` and `PilihNasabahSection` were never modified, and every pre-existing page and picker test passes unedited. But the specific reuse the plan named did not happen — see below. |
 | **Repository / Use Case layering** | **Held.** `TransaksiCubit`, `AddTransaksiUseCase` and `TransaksiRepository` are untouched across all three slices. |
 | **DIP** | **Not yet earned.** The wide-screen tests drive the real cubit over a stubbed API rather than a mocked cubit. True, but not the claim I made. |
@@ -121,7 +121,7 @@ PIL-293 deliberately shipped three layout primitives with no call sites, on the
 argument that PIL-340 would adopt them. The plan named two of them. Both were
 wrong.
 
-**`MasterDetailLayout`** does not fit, and could not:
+**[`MasterDetailLayout`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/lib/design/layout/master_detail_layout.dart#L36-L49)** does not fit, and could not:
 
 - it splits at medium (600); the setoran form needs expanded (840). Between
   600 and 839, with the 256px rail, each column gets about 200px.
@@ -130,9 +130,10 @@ wrong.
 - the summary is an always-present aggregate, not the detail of a selected
   row — a different pattern wearing the same shape.
 
-**`PageStateView`** does not fit either, and this one is worse, because using
-it would have made the screen actively worse. It is built for a page loading
-data, and its own source says so:
+**[`PageStateView`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/lib/design/layout/page_state_view.dart#L62-L84)** does not fit
+either, and this one is worse, because using it would have made the screen
+actively worse. It is built for a page loading data, and its own source says
+so:
 
 ```dart
 // Konten lama sengaja tidak ditampilkan di balik skeleton: angka basi
@@ -171,7 +172,7 @@ until a real one arrived.
 
 ### What appeared that was not planned
 
-**Strategy, again.** `PickerPresentation.resolve(width:)` picks the container
+**Strategy, again.** [`PickerPresentation.resolve(width:)`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9ce14d8/lib/design/layout/picker_presentation.dart#L53-L57) picks the container
 for a modal picker — bottom sheet on a phone, centred dialog in a browser —
 with `showAdaptivePicker` owning all the container chrome. Same shape as
 `NavigationForm` in PIL-293, and arrived at for the same reason: the rule is

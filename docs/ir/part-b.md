@@ -37,7 +37,7 @@ taken on it.
 
 **Single Responsibility.** `RoleNavigationBar` previously held two
 responsibilities: *which* destinations a role has, and *how* they are drawn.
-Extracting `RoleDestinations` separates them — the data belongs to one module,
+Extracting [`RoleDestinations`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/widgets/role_destinations.dart#L36-L46) separates them — the data belongs to one module,
 the rendering to each widget.
 
 **Open/Closed.** The rail was added **without modifying** `RoleNavigationBar`'s
@@ -46,7 +46,7 @@ is byte-for-byte unchanged in that commit, and the 18 existing navigation tests
 passed with none of them edited.
 
 **Strategy** and **Dependency Inversion** also apply — one pure selector with
-three interchangeable renderers, and a `@visibleForTesting` platform seam
+three interchangeable renderers ([`NavigationForm.resolve`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/design/layout/navigation_form.dart#L26-L35)), and a [`@visibleForTesting` platform seam](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/pages/main_page.dart) 
 without which the whole web branch would be untestable.
 
 The ordering is the evidence. I extracted the shared source in its own
@@ -131,16 +131,26 @@ not prove the application starts.
 
 **Level, stated honestly.** The criterion scores by *count*: one item is level
 1, **five** is level 2, and levels 3–4 need a Metasploit-style scan that this
-project does not yet use. PIL-293 names A01 only, so it is level 1. The five-item
-case arrives with PIL-340, where the feature touches money — planned in advance
-and marked for what I wrote versus what I am citing, in
-[Security](../process/security.md).
+project does not yet use.
+
+PIL-293 names A01 only. PIL-340 names three — **A01**, **A04** and **A05** —
+across [five commit bodies](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/72/commits),
+with A05 (the CORS misconfiguration) explicitly labelled in the PR as a finding
+*reported*, not code in that diff.
+
+Three, not five. A08 would have been a fair fourth — the WhatsApp-draft bug is
+an integrity failure between what was stored and what was reported — and I did
+not claim it at commit time. I am recording that as a miss rather than
+back-filling it, because the point of naming the item while planning the slice
+is lost if it can be added afterwards. A03 and A07 are not genuinely engaged by
+either ticket and padding the count with them would be worth less than the
+three that are real.
 
 OWASP **A01 (Broken Access Control)** appears in five PIL-293 commits — both
 `RoleDestinations` commits, both navigation rail commits, and the navigation
 drawer. The other twenty-six have no security angle and do not claim one.
 
-The substance: one source of truth for role-to-destination mapping, so adding a
+The substance ([`forRole`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/widgets/role_destinations.dart#L36-L46)): one source of truth for role-to-destination mapping, so adding a
 second *or third* navigation surface cannot widen any role's menu; `forRole`
 fails closed on unknown roles; rail and drawer both render nothing without a
 session. All of it is pinned by tests.
@@ -153,3 +163,36 @@ control lives — server-side authorization plus the router redirect.
     PIL-293 it was missing entirely until it was caught after the PR was open,
     then fixed by rewriting four commit messages. The remedy is to choose the
     OWASP item while planning the slices, not when writing the commit.
+
+## B7 · AI literacy
+
+**Claim.** The context I supply is what makes the tool useful, and the
+verification I insist on is what makes its output trustworthy.
+
+**Evidence.** The full record, with my actual prompts at the points where I
+rejected or redirected what I was given, is on the
+[AI literacy](ai-literacy.md) page. Three things it shows:
+
+- **Context the tool had no way to obtain.** My lead dev's rule that the bar
+  sits at the bottom in the app and the navigation on the left in a browser
+  replaced a width-only design that was wrong in both directions. That one
+  sentence deleted a whole class of viewport workarounds from the test suite —
+  see [`navigation_form.dart`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/design/layout/navigation_form.dart#L26-L35),
+  where the platform decides the family and width only decides how much
+  left-hand navigation fits.
+- **Corrections tallied by cause, not anecdote.** Nine corrections across the
+  sprint, and seven sit in two rows of the same table: a conclusion reached by
+  inference when direct evidence was one command away. That share was higher
+  than I expected, and the checks were all cheap.
+- **Remedies that are themselves checked.** The
+  [programming principles](../process/programming.md) page states what a
+  ticket will claim *before* its commits exist. On PIL-340 that mechanism
+  caught two false claims — and only half worked, because a reviewer noticed
+  the stale claim before I re-read my own page.
+
+**Honest limitation.** The remedy for the OWASP miss — choose the item while
+planning the slices — has now failed three times in softer and softer forms:
+missing entirely on PIL-168, missing again on PIL-293, and under-claimed on
+PIL-340. One successful application would not be evidence it holds; three
+partial failures are evidence it does not.
+

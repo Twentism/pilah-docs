@@ -97,9 +97,10 @@ nav:
       - Code quality: process/quality.md
   - IR evidence:
       - ir/index.md
-      - Part B — hard skills: ir/part-b.md
+      - Part B — hard skills:
+          - ir/part-b.md
+          - B7 · AI literacy: ir/ai-literacy.md
       - Part C — soft skills: ir/part-c.md
-      - AI literacy: ir/ai-literacy.md
 
 extra:
   social:

@@ -14,7 +14,7 @@ inferable from the codebase.
 |---|---|
 | **The three project documents** — IR Guidelines, PRD, SDS | Every delivery is shaped to the rubric and the product spec rather than to generic best practice. Reading the IR Guidelines myself is what caught that the security criterion is scored by *count* of OWASP items, not by naming one |
 | **My lead dev's navigation rule** — in the app the bar is at the bottom, in a browser the navigation is on the left | Replaced a width-only design that was wrong in both directions. The clearest case of my context beating the tool's own answer — see below |
-| **The hamburger for phone browsers** — my call on how that rule extends to a narrow window | Produced the third navigation form, `RoleNavigationDrawer` |
+| **The hamburger for phone browsers** — my call on how that rule extends to a narrow window | Produced the third navigation form, [`RoleNavigationDrawer`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/widgets/role_navigation_drawer.dart) |
 | **Tristan's money rule** — rupiah is whole, always rounded *down*, decided 17 Sep | Overrode the `ROUND_HALF_UP` reading implied by PIL-138's notes. Became `bulatkan_rupiah`, now shared across the backend |
 | **Agreements with Pascal on PIL-223** — which fields lock, one 403 for the whole request, `email` deferred until PIL-154 merged | The tool could not have known `email` was about to become the account-linking key, so locking it then would have been wrong for a reason invisible in the code |
 | **Web is Super Admin, Pengurus and Pengurus Induk only** — never Nasabah | Scoped the entire web shell, including which roles fail closed |
@@ -60,7 +60,7 @@ prompts, at the points where I rejected or redirected what I was given.
     landscape is 844px wide and therefore lost its bottom bar — and its proposed
     fix was to add Material's window *height* class as a second dimension.
 
-    I gave it my lead dev's rule instead: platform decides, not size. That made
+    I gave it my lead dev's rule instead: platform decides, not size — [`NavigationForm.resolve`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/design/layout/navigation_form.dart#L26-L35). That made
     the bug disappear rather than be guarded against, and let a whole layer of
     viewport workarounds be deleted from the test suite. A domain rule from a
     human beat a technically correct elaboration from the tool.

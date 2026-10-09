@@ -102,6 +102,69 @@ than asserted.
     the answer changes between them. A test at 400 and 1400 passes whether the
     comparison is `>` or `>=`. This one does not.
 
+### The same three, from PIL-340
+
+PIL-293's examples are about layout. These are about a rule that moves money,
+so the stakes read differently. All three come from
+`test/features/transaksi/domain/setoran_draft_test.dart`, which builds no
+widget at all.
+
+=== "Positive"
+
+    ```dart
+    test('a nasabah and one weighed item is submittable', () {
+      final subject = draft();
+      expect(subject.problems, isEmpty);
+      expect(subject.isValid, isTrue);
+      expect(subject.invalidItemIndexes, isEmpty);
+    });
+    ```
+
+    The ordinary case: someone chosen, something weighed. It asserts on all
+    three accessors rather than just `isValid`, because the form needs
+    `invalidItemIndexes` to decide which card to redden — a happy path that
+    only checked the boolean would let that drift.
+
+=== "Negative"
+
+    ```dart
+    test('an item left at zero weight', () {
+      final subject = draft(
+          items: const [SetoranItemDraft(jenisSampahId: jenis, berat: 0)]);
+      expect(subject.problems, contains(SetoranProblem.nonPositiveBerat),
+          reason: 'clearing the weight box yields 0 and must not be submitted');
+      expect(subject.invalidItemIndexes, {0});
+    });
+    ```
+
+    This is the test that found a real bug. `num.tryParse('') ?? 0.0` means an
+    emptied weight box is `0`, and the old guard never looked. The negative
+    case here is not a hypothetical bad input — it is what happens when a
+    pengelola selects the weight and presses backspace.
+
+=== "Corner"
+
+    ```dart
+    test('zero is rejected and the smallest step above it is accepted', () {
+      expect(
+        draft(items: const [SetoranItemDraft(jenisSampahId: jenis, berat: 0)])
+            .isValid,
+        isFalse,
+      );
+      expect(
+        draft(items: const [SetoranItemDraft(jenisSampahId: jenis, berat: 0.1)])
+            .isValid,
+        isTrue,
+        reason: 'the rule is "more than zero", not "at least one kilo"',
+      );
+    });
+    ```
+
+    Both halves are needed. Without the second, `berat >= 1` would also pass —
+    and bank sampah weigh in hundreds of grams, so that reading of the rule
+    would quietly reject real setoran. The corner case is the pair, not either
+    value alone.
+
 ### How I find the corner cases
 
 Not by intuition — by asking three questions of each input:
@@ -145,6 +208,176 @@ I look for the same thing when reviewing. Vegard did exactly this on
 [be #89](https://github.com/bank-sampah-PILAH/pilah-be/pull/89) — removed the
 rounding, saw `315600.75 != 315600.00`, restored it — and it is why his
 "no behaviour change" claim was believable rather than asserted.
+
+## Test doubles: what is faked, and what it costs
+
+The rubric asks which tests use mocks or stubs. The more useful answer is
+*which layer* each one fakes, because that decides what the test can still
+catch.
+
+### Level 0 — no double at all
+
+`test/features/transaksi/domain/setoran_draft_test.dart`, 14 tests.
+
+`SetoranDraft` has no collaborators: it takes values and answers questions
+about them. Nothing to fake, so nothing is faked.
+
+**Implication.** These tests are fast and cannot rot, because there is no seam
+to drift. They also prove nothing about wiring — a perfectly correct
+`SetoranDraft` that no page ever calls would pass all 14. That is exactly why
+slice 1 was followed by a page test asserting no request was sent.
+
+### Level 1 — a stub at the transport boundary
+
+`test/support/stub_api.dart:53`:
+
+```dart
+class StubApi implements HttpClientAdapter {
+  void on(String method, String path, {int status = 200, Object? json}) {
+    _routes['${method.toUpperCase()} $path'] = (_) => ResponseBody.fromString(
+          jsonEncode(json), status, ...);
+  }
+}
+```
+
+This is a **stub**, not a mock: it returns canned answers and records what it
+was asked, but no test asserts "this method was called on it". It replaces
+Dio's `HttpClientAdapter` — the lowest layer in the app, the thing that would
+otherwise open a socket.
+
+Everything above it is real. `test/support/transaksi_support.dart:13`:
+
+```dart
+TransaksiCubit buildTransaksiCubit(StubApi api) {
+  final repository =
+      TransaksiRepositoryImpl(TransaksiRemoteDataSourceImpl(api.network));
+  return TransaksiCubit(
+    GetTransaksiUseCase(repository),
+    GetTransaksiDetailUseCase(repository),
+    AddTransaksiUseCase(repository),
+    ...
+  );
+}
+```
+
+So a page test exercises the genuine cubit, use case, repository, data source
+and serialisation. Only the socket is fake.
+
+**Implication, and the reason this is the default here.** Assertions are about
+*state and traffic*, not about calls:
+
+```dart
+expect(api.requests.where((r) => r.method == 'POST'), isEmpty,
+    reason: 'a 0 kg setoran must not be sent at all');
+```
+
+That sentence is the actual requirement. Had the page test mocked
+`TransaksiCubit` instead, the strongest available assertion would have been
+"`addTransaksi` was not called" — true, but one layer away from what matters,
+and still green if a request reached the network by some other path. The stub
+lets the test assert at the boundary the requirement is written about.
+
+The cost is real: these tests are slower, and they can fail for reasons outside
+the widget under test. On this project they have repeatedly earned it.
+
+### Level 2 — a mock, for a side effect that leaves the app
+
+`test/features/transaksi/presentation/pages/transaksi_baru_page_test.dart:33`:
+
+```dart
+class _MockUrlLauncher extends Mock
+    with MockPlatformInterfaceMixin
+    implements UrlLauncherPlatform {}
+```
+
+installed at `:63` and verified at `:441` and `:506`:
+
+```dart
+final launched = verify(() => launcher.launchUrl(captureAny(), any()))
+    .captured
+    .single as String;
+expect(launched, contains('Botol'));
+```
+
+Opening WhatsApp hands control to another application. There is no resulting
+state inside the app to inspect, so the only observable fact is *that the call
+happened, with this URL*. That is behaviour verification, and a mock is the
+right tool for it.
+
+**Implication.** This test is coupled to the shape of the call. Change
+`launchUrl`'s signature, or route the deeplink through a wrapper, and it breaks
+even though the behaviour is identical. That is the price of asserting on a
+call rather than a result, and it is worth paying only where there is no result
+to assert on.
+
+### Level 3 — a mock to reach a state the stub cannot produce
+
+`test/features/transaksi/presentation/widgets/pilih_nasabah_flow_test.dart:15`,
+used at `:121`:
+
+```dart
+final broken = _MockNasabahCubit();
+whenListen(broken, const Stream<NasabahState>.empty(),
+    initialState: NasabahInitial());
+when(() => broken.loadActiveNasabah())
+    .thenAnswer((_) async => throw StateError('rusak'));
+```
+
+`StubApi` can return a 403, a 500, or malformed JSON — all of which arrive as
+`NetworkException`. It cannot produce a bare `StateError`, because that is not
+something a transport returns. The picker has a branch for exactly that case:
+
+```dart
+error is NetworkException ? error.displayMessage : error.toString()
+```
+
+Without a mock, that second path is unreachable and untested.
+
+**Implication.** The mock exists to reach one otherwise-dead line, and the test
+still asserts on rendered text rather than on calls. It is the narrowest use I
+reached for.
+
+### The rule I follow
+
+1. **No double** when the unit has no collaborators.
+2. **Stub** by default, as low as possible — fake the socket, keep the app.
+3. **Mock** only when there is no observable result: a side effect that leaves
+   the app, or a state the stub physically cannot produce.
+
+The failure mode this avoids is a suite that mocks the layer directly beneath
+the one under test. It passes forever, breaks on every refactor, and never
+catches an integration bug — the three worst properties a test can have.
+
+!!! note "Both kinds, in one test"
+    The WhatsApp-snapshot test needs a request held open mid-flight, and needs
+    to see which URL was launched. The stub supplies the first
+    (`api.latency = const Duration(seconds: 1)`, a realistic in-flight window
+    at the transport layer); the mock supplies the second. They are not
+    alternatives — they answer different questions.
+
+### A double that made a test lie
+
+`StubApi` is not the only fake in play. The WhatsApp template comes from
+`stubProfile`, whose default is:
+
+```dart
+'template': 'Halo {nama}'
+```
+
+My first version of the snapshot test asserted the launched URL contained
+`'Botol'`. It never could: that template has no item placeholder, and `{nama}`
+is not even a key the code substitutes. The test failed before the fix and
+would have failed after it — it was not measuring the behaviour at all.
+
+Fixed by having the test set the fixture it actually depends on:
+
+```dart
+stubProfile(api, wa: {'template': 'Setoran: {daftar_item}', ...});
+```
+
+The lesson is specific to doubles: **a test is only as meaningful as the
+fixture it runs against**, and a shared default fixture is a comfortable place
+for a test to quietly stop testing anything.
 
 ## Where I got this wrong
 

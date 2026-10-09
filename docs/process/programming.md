@@ -111,14 +111,17 @@ first is that they can come out wrong, and one did.
 | Claim | Outcome |
 |---|---|
 | **SRP** | **Held.** `SetoranDraft` / `SetoranItemDraft` carry the rules, tested by 14 unit tests with no widget built at all. It also caught a real bug: `num.tryParse('') ?? 0.0` means clearing the weight box yields 0, and nothing stopped that 0 kg setoran reaching the server. |
-| **OCP** | **Partly, and one part refuted — see below.** |
+| **OCP** | **Held in substance, refuted in detail.** `TransaksiCubit`, `ItemSetoranCard` and `PilihNasabahSection` were never modified, and every pre-existing page and picker test passes unedited. But the specific reuse the plan named did not happen — see below. |
 | **Repository / Use Case layering** | **Held.** `TransaksiCubit`, `AddTransaksiUseCase` and `TransaksiRepository` are untouched across all three slices. |
 | **DIP** | **Not yet earned.** The wide-screen tests drive the real cubit over a stubbed API rather than a mocked cubit. True, but not the claim I made. |
 
-### The claim that was wrong
+### The claims that were wrong
 
-The plan said PIL-340 would reuse **`MasterDetailLayout`**. It does not, and
-could not:
+PIL-293 deliberately shipped three layout primitives with no call sites, on the
+argument that PIL-340 would adopt them. The plan named two of them. Both were
+wrong.
+
+**`MasterDetailLayout`** does not fit, and could not:
 
 - it splits at medium (600); the setoran form needs expanded (840). Between
   600 and 839, with the 256px rail, each column gets about 200px.
@@ -127,10 +130,32 @@ could not:
 - the summary is an always-present aggregate, not the detail of a selected
   row — a different pattern wearing the same shape.
 
-So of the three primitives PIL-293 shipped unused, **`ContentBounds` was
-adopted, `PageStateView` is still pending (slice 4), and `MasterDetailLayout`
-is refuted.** It is still the right widget for a real list-and-detail screen
+**`PageStateView`** does not fit either, and this one is worse, because using
+it would have made the screen actively worse. It is built for a page loading
+data, and its own source says so:
+
+```dart
+// Konten lama sengaja tidak ditampilkan di balik skeleton: angka basi
+// yang terlihat seperti angka terkini lebih menyesatkan daripada menunggu.
+PageState.loading => ListView.builder(... const SkeletonListItem()),
+```
+
+Hiding stale content is right for a list of figures and wrong for a form: it
+would blank out what the pengelola just typed. `empty` has no meaning for a
+save at all, and a failed save is already better served by a notification that
+names the server's message while leaving the form intact to retry. Replacing
+the form with a full-page error and a "Coba lagi" button would discard the
+work.
+
+So the scoreboard for the three primitives is **`ContentBounds` adopted, the
+other two refuted** — one for three. Both remain reasonable widgets;
+`MasterDetailLayout` is still right for a genuine list-and-detail screen
 (PIL-337+), which is what PR #70 said it was for.
+
+The honest conclusion is about the bet, not the widgets: **shipping a primitive
+before its first caller means designing against an imagined screen.** Two of
+the three guesses about that screen were wrong, and neither was discoverable
+until a real one arrived.
 
 !!! warning "A reviewer found this, not me"
     Heraldo flagged on PR #70 that a widget with no call sites is tested only

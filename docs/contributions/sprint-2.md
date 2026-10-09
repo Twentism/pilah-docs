@@ -18,11 +18,12 @@ Short version: the app had exactly one navigation form, a bottom bar, which is
 right on a phone and wrong on a 1440px monitor. PIL-293 makes the platform
 decide — bottom bar in the app, left-hand navigation in a browser — adds a
 navigation rail and a drawer for narrow browsers, caps the content width, and
-ships two layout primitives the other web tickets will reuse.
+ships three layout primitives the other web tickets were expected to reuse.
+Two of those three turned out not to fit — see PIL-340 below.
 
-<span class="chip chip-open">open</span>
+<span class="chip chip-merged">merged</span>
 [PR #70](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/70) ·
-31 commits · base `staging` · all checks green
+35 commits · merged into `staging` · approved by @HeraldoArman · SonarCloud 0 issues
 
 ## What made this sprint harder than Sprint 1
 
@@ -83,6 +84,58 @@ I reported it on my PR and left it alone. It is not PIL-293's scope, and the
 fix belongs with the bloc: a test seam should not be a constructor parameter
 that `injectable` can see.
 
+## My second ticket: PIL-340
+
+Recording a setoran on the web — the one screen in the dashboard that writes.
+Full write-up in the [PIL-340 case study](pil-340.md).
+
+Short version: six slices built on PIL-293's shell. Validation moved out of the
+487-line page widget into a value object, the form became two columns on wide
+windows, the nasabah picker and the success confirmation became dialogs in a
+browser while staying bottom sheets on a phone, the form now freezes while a
+save is in flight, and the whole thing can be driven from the keyboard.
+
+<span class="chip chip-open">open</span>
+[PR #72](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/72) ·
+23 commits · base `staging` · all checks green · SonarCloud 0 issues
+
+Three real bugs came out of it, each found by a test rather than by reading:
+a 0 kg setoran that was being POSTed, a summary row that overflowed on every
+real phone width, and a WhatsApp draft that could describe a setoran the server
+never saw. The third is the one worth reading about — the code already carried
+a comment claiming it was handled.
+
+### The primitives bet, settled
+
+Sprint 2's PIL-293 shipped three layout primitives with no call sites, on the
+argument that PIL-340 would reuse them. That was a bet, and it mostly lost:
+
+| Primitive | Outcome |
+|---|---|
+| `ContentBounds` | Adopted |
+| `MasterDetailLayout` | Refuted — wrong breakpoint, wrong sizing model |
+| `PageStateView` | Refuted — hides content a form must keep |
+
+One for three. Both refuted widgets are still reasonable; they were just
+designed against an imagined screen rather than a real one. The reasoning is
+in [programming principles](../process/programming.md), where the claim had
+been written down in advance precisely so it could be checked.
+
+## A blocker that was not ours
+
+Saving from a browser failed outright. The backend log showed four
+`OPTIONS //api/v1/transaksi` preflights and no `POST` — the browser was
+refusing to send the request, because it carries an `Idempotency-Key` header
+and `CORS_ALLOW_ALL_ORIGINS=true` permits any origin but not arbitrary headers.
+
+The useful part is why nobody had hit it: **CORS is browser-only.** The native
+app sends no preflight, so the header always sailed through. Web is the first
+client to send it, which is exactly the kind of thing a new platform surfaces.
+Reported; the team was already handling it alongside a web deployment, and
+asked for a local-only fix.
+
 ## Next
 
-PIL-340, once PIL-293 is through review.
+PIL-340 is in review. Native verification on a physical device is still
+outstanding for both tickets — the APK builds and the phone paths are covered
+by tests, but nothing has run on hardware.

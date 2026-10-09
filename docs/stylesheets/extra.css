@@ -72,9 +72,26 @@
   font-weight: 600;
 }
 
-/* Readable measure for long prose. Raise if you prefer wider text. */
+/* Page width. The grid holds the nav, the content column and the table of
+   contents, so raising it widens the middle. Change this one number. */
 .md-grid {
-  max-width: 1180px;
+  max-width: 1760px;
+}
+
+/* The content column gets the extra room rather than the two sidebars, which
+   stay at their natural width. Without this the middle barely grows. */
+.md-main__inner > .md-content {
+  max-width: none;
+}
+
+/* Prose keeps a readable measure even on a very wide screen; tables, code
+   blocks and admonitions are free to use the full width, which is where the
+   extra room is actually wanted. */
+.md-typeset > p,
+.md-typeset > ul,
+.md-typeset > ol,
+.md-typeset > blockquote {
+  max-width: 95ch;
 }
 
 /* Blockquotes become a quiet left-rule instead of a grey slab. */

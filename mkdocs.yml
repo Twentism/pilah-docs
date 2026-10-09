@@ -87,6 +87,7 @@ nav:
       - Sprint 1: contributions/sprint-1.md
       - Sprint 2: contributions/sprint-2.md
       - PIL-293 case study: contributions/pil-293.md
+      - PIL-340 case study: contributions/pil-340.md
   - How I work:
       - process/index.md
       - TDD: process/tdd.md

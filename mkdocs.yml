@@ -82,25 +82,16 @@ plugins:
 
 nav:
   - Overview: index.md
-  - Contributions:
-      - contributions/index.md
-      - Sprint 1: contributions/sprint-1.md
-      - Sprint 2: contributions/sprint-2.md
-      - PIL-293 case study: contributions/pil-293.md
-      - PIL-340 case study: contributions/pil-340.md
-  - How I work:
-      - process/index.md
-      - TDD: process/tdd.md
-      - Programming principles: process/programming.md
-      - Security: process/security.md
-      - Peer review: process/peer-review.md
-      - Code quality: process/quality.md
-  - IR evidence:
-      - ir/index.md
-      - Part B — hard skills:
-          - ir/part-b.md
-          - B7 · AI literacy: ir/ai-literacy.md
-      - Part C — soft skills: ir/part-c.md
+  - IR Part B:
+      - ir/part-b.md
+      - Sprint 1 · Week 1: ir/b/s1-w1.md
+      - Sprint 1 · Week 2: ir/b/s1-w2.md
+      - Sprint 1 · Week 3: ir/b/s1-w3.md
+      - Sprint 2 · Week 1: ir/b/s2-w1.md
+      - 'Deep dive: PIL-293': contributions/pil-293.md
+      - 'Deep dive: PIL-340': contributions/pil-340.md
+      - B7 · AI literacy: ir/ai-literacy.md
+  - IR Part C: ir/part-c.md
 
 extra:
   social:

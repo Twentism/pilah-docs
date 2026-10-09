@@ -47,30 +47,32 @@ half-rupiah — and calculations round *down*, never to nearest. I implemented
 that rule in PIL-168 and it has since become shared infrastructure:
 `shared_kernel/kalkulasi.bulatkan_rupiah` is now the single place the rule
 lives, and other people's code is being refactored onto it. See
-[Sprint 1](contributions/sprint-1.md).
+[Sprint 1 · Week 1](ir/b/s1-w1.md).
 
 **Permissions belong where they can be enforced.** PIL-223 and PIL-288 are both
 about *who may change what*, and both resolve to the same shape: the server
 decides, the client reflects. When I later built role-aware navigation for the
 web shell, the same instinct produced a single source of truth for
-role-to-destination mapping. See [Security](process/security.md).
+role-to-destination mapping. See [Sprint 1 · Week 2](ir/b/s1-w2.md#b6--security).
 
 **Tests come first, and the commits show it.** Every delivery here is a
 sequence of `red` → `green` → `refactor` commits where the failing test is a
-separate commit from the code that makes it pass. See [TDD](process/tdd.md).
+separate commit from the code that makes it pass. See [the commit convention](ir/part-b.md#the-commit-convention).
 
 ## Finding your way around
 
 <div class="grid cards" markdown>
 
-- :material-source-branch: **[Contributions](contributions/index.md)**
-  Every ticket, every PR, what each one actually changed.
+- :material-code-tags: **[IR Part B — hard skills](ir/part-b.md)**
+  Week by week: TDD, principles, discipline, review, quality, security and AI
+  literacy, each with the commits behind it.
 
-- :material-flask: **[How I work](process/index.md)**
-  TDD, security, review and quality — with real examples, including the
-  mistakes.
+- :material-account-group: **[IR Part C — soft skills](ir/part-c.md)**
+  Week by week: what I learned outside class, how I worked with the team, and
+  where I was wrong.
 
-- :material-clipboard-check: **[IR evidence](ir/index.md)**
-  Mapped to the Part B and Part C criteria, with links.
+- :material-book-open-variant: **Deep dives**
+  [PIL-293](contributions/pil-293.md) — the responsive web shell ·
+  [PIL-340](contributions/pil-340.md) — recording a setoran on the web.
 
 </div>

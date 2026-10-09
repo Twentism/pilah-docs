@@ -128,7 +128,7 @@ knowledge problem — the checks were all cheap.
    misses of the same shape meant the remedy had to move earlier in the process
    rather than be applied harder at the end.
 4. **Plans written before the work** — the
-   [programming principles](../process/programming.md) page states what PIL-340
+   [programming principles](b/s2-w1.md#b2--programming-principles) page states what PIL-340
    will claim before its commits exist, so the claim can be checked against them
    instead of reverse-engineered from them.
 

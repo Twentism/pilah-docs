@@ -1,76 +1,63 @@
-# Part B — hard skills
+# IR Part B — hard skills
 
-## B1 · Test-driven development
+Organised by **week**, because that is how the work happened and how it gets
+assessed. Each week carries its own B1–B7 evidence; nothing is claimed twice,
+and nothing is claimed before it exists.
 
-**Claim.** Disciplined red-green-refactor, visible in the commit history, with
-positive, negative and boundary cases.
+## The weeks
 
-**Evidence.** [PR #70's 31 commits](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/70/commits) — 13 `red`, 13 `green`, 4 `refactor`, 1 `test`.
-Every cycle is two commits: the failing test, then the smallest change that
-passes it. Test and implementation are never in the same commit, because if they
-were, nobody could tell which came first.
+| Week | Dates (2026) | What shipped | Criteria with evidence |
+|---|---|---|---|
+| [Sprint 1 · Week 1](b/s1-w1.md) | 15–21 Sep | Whole-rupiah money rules, deposit input limits | B1 B2 B3 B5 B6 |
+| [Sprint 1 · Week 2](b/s1-w2.md) | 22–28 Sep | Nasabah paging, profile-edit permissions, account linking | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 1 · Week 3](b/s1-w3.md) | 29 Sep – 1 Oct | Sprint close — no commits of mine | — |
+| [Sprint 2 · Week 1](b/s2-w1.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
 
-Boundary coverage is deliberate, not incidental. Window width is a continuous
-input, so it is partitioned and tested on-point and off-point:
+Sprint 2 runs to 22 Oct, so Weeks 2 and 3 do not exist yet. They are not listed
+until they have something in them.
 
-| Partition | On-point | Off-point |
-|---|---|---|
-| compact | 599 | 600 |
-| medium | 600, 839 | 599, 840 |
-| expanded | 840 | 839 |
+## Deep dives
 
-Plus degenerate input: a non-positive width returns compact rather than
-throwing.
+Two tickets were large enough to deserve their own write-up rather than a
+paragraph inside a week:
 
-Also worth showing: one slice produced **no production code**. The keyboard
-tests passed immediately because Material's `NavigationRail` already handles Tab
-and Enter. I kept them as regression cover and committed them as `test(nav)`
-rather than `green`, with the reason in the message — rather than invent a
-widget to make the slice look productive.
+<div class="grid cards" markdown>
 
-See [TDD](../process/tdd.md) for the full convention and the corrections I have
-taken on it.
+- :material-view-dashboard-outline: **[PIL-293 — the responsive web shell](../contributions/pil-293.md)**
+  Platform decides the navigation family, width decides how much of it fits.
 
-## B2 · Programming principles
+- :material-cash-register: **[PIL-340 — recording a setoran on the web](../contributions/pil-340.md)**
+  Six slices, three bugs found by tests, two refuted design claims.
 
-**Claim.** Named principle, pointed at the diff.
+- :material-robot-outline: **[B7 — AI literacy](ai-literacy.md)**
+  The full session record: where the tool was wrong and how it was caught.
 
-**Single Responsibility.** `RoleNavigationBar` previously held two
-responsibilities: *which* destinations a role has, and *how* they are drawn.
-Extracting [`RoleDestinations`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/widgets/role_destinations.dart#L36-L46) separates them — the data belongs to one module,
-the rendering to each widget.
+</div>
 
-**Open/Closed.** The rail was added **without modifying** `RoleNavigationBar`'s
-render path. That is checkable rather than asserted: the bar's `build()` output
-is byte-for-byte unchanged in that commit, and the 18 existing navigation tests
-passed with none of them edited.
+## Standing conventions
 
-**Strategy** and **Dependency Inversion** also apply — one pure selector with
-three interchangeable renderers ([`NavigationForm.resolve`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/design/layout/navigation_form.dart#L26-L35)), and a [`@visibleForTesting` platform seam](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/pages/main_page.dart) 
-without which the whole web branch would be untestable.
+These do not belong to a single week — they are how every week is worked.
 
-The ordering is the evidence. I extracted the shared source in its own
-red-green pair *before* writing the rail and the drawer, specifically so each
-new form could be added additively. Both commit bodies say which principle
-applies and why.
+### The commit convention
 
-Full write-up with commit links, including what I deliberately do **not**
-claim: [Programming principles](../process/programming.md).
+The red-green-refactor cycle is visible in the git history, because that is the
+only way a claim to practise TDD can be checked:
 
-## B3 · Development discipline
-
-**Claim.** Descriptive Conventional Commits, PR titles in the agreed form, more
-than two meaningful MRs per week.
-
-| | |
+| Prefix | Means |
 |---|---|
-| Merged PRs | 5 backend, 3 mobile |
-| Open | 1 (PR #70), 31 commits |
-| Commit style | `red/green/refactor(scope): subject`, body explains *why* |
-| PR titles | `PIL-<n>: <short imperative>` |
+| `red(scope)` | A failing test for **one** behaviour. Run, and seen to fail. |
+| `green(scope)` | The smallest change that makes it pass. |
+| `refactor(scope)` | Real cleanup, no behaviour change. |
+
+Two rules I hold to:
+
+- **The test and the implementation are never in the same commit.** If they
+  are, nobody can tell whether the test was written first.
+- **One behaviour per cycle.** Bundling slices makes the history unreadable and
+  hides which test drove which line.
 
 Commit bodies record the commands actually run and their output, so a reviewer
-can re-run them:
+can re-run them rather than take my word:
 
 ```text
 flutter test test/design/layout/layout_breakpoint_test.dart -> 10 lulus
@@ -78,121 +65,100 @@ flutter test test/features/main/role_navigation_test.dart   -> 15 lulus, tidak a
 flutter analyze lib/design/layout test/design/layout        -> No issues found
 ```
 
-!!! note "On splitting PRs for the count"
-    I considered splitting PIL-293 into three PRs to raise the MR count, and
-    did not. The criterion counts *meaningful* MRs per week across all work, and
-    splitting one coherent change to inflate a number is exactly what the
-    "meaningful" qualifier excludes. One PR, 22 legible commits.
+### How I find corner cases
 
-## B4 · Peer review
+Not by intuition — by asking three questions of each input:
 
-**Claim.** Reviews that state a positive point, a negative point and a feasible
-concrete fix.
+1. **Where does the answer change?** Every `if` and every comparison is a
+   boundary. Test the last value on each side, not a comfortable value in the
+   middle.
+2. **What is the smallest or emptiest valid input?** Zero weight, an empty
+   destination list, a width of `0` before the first frame has measured the
+   window.
+3. **What does the type allow that the domain does not?** `double` permits a
+   negative width; the domain does not. That produced a deliberate decision —
+   return the narrowest form rather than throw, because the caller should not
+   have to guard a transient startup state.
 
-**Sprint 2 evidence:**
+### Proving a test actually guards the line
 
-- [be #89](https://github.com/bank-sampah-PILAH/pilah-be/pull/89#pullrequestreview-5455262911)
-  — verified the refactor really is semantics-preserving, then showed with a
-  worked numeric example that the new test cannot distinguish per-step rounding
-  from rounding once at the end, and proposed the specific missing case.
-- [mobile #69](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/69#pullrequestreview-5455267951)
-  — identified that a claimed fix had already merged that morning, with file and
-  line references, and challenged a `coverage:ignore` as deferring a decision
-  rather than making one.
+A test that passes is not evidence that it would fail. When I add a test to pin
+existing behaviour, I break the line on purpose and watch it fail, then restore
+it. If it does not fail, it was not guarding anything.
 
-Sprint 1: be #48 and #49, both on Heraldo's work.
+I look for the same thing when reviewing — see
+[Sprint 1 · Week 2](b/s1-w2.md#b4--peer-review) for a reviewer who did exactly
+that to my own code.
 
-**Honest limitation.** This is my weakest criterion. The pattern is that I
-review well when the PR touches code I wrote and less often otherwise — both
-Sprint 2 reviews were chosen on that basis. That makes the reviews good and the
-coverage narrow.
+### The rule for test doubles
 
-## B5 · Code quality
+1. **No double** when the unit has no collaborators.
+2. **Stub** by default, as low as possible — fake the socket, keep the app.
+3. **Mock** only when there is no observable result: a side effect that leaves
+   the app, or a state the stub physically cannot produce.
 
-**Claim.** Linters and type checking clean on new code; no new SonarCloud
-issues.
+The failure mode this avoids is a suite that mocks the layer directly beneath
+the one under test. It passes forever, breaks on every refactor, and never
+catches an integration bug. Worked through in full — including the practical
+difference between the two, with line-level references — in
+[Sprint 2 · Week 1](b/s2-w1.md#test-doubles-what-is-faked-and-what-it-costs).
 
-| Check | Result |
+### Gates run before every push
+
+**Backend — `pilah-be`**
+
+```bash
+ruff check . && ruff format --check .
+mypy api apps config shared_kernel tests      # strict
+python manage.py makemigrations --check --dry-run
+python manage.py test
+```
+
+**Mobile — `pilah-mobile`**
+
+```bash
+flutter analyze lib test                                     # --fatal-infos in CI
+dart format --output=none --set-exit-if-changed lib test codegen
+flutter test --coverage
+flutter build web --release -t lib/main_development.dart
+```
+
+`makemigrations --check` is there because a model change without a migration
+passes every other check and then breaks the next person to pull.
+
+### What the security criterion actually asks
+
+Worth stating plainly, because I had it wrong at first. B6 is scored by **how
+many** of the OWASP Top 10 the code demonstrably prevents, named in the commit
+message body:
+
+| Level | Requirement |
 |---|---|
-| `flutter analyze lib test` | No issues found |
-| `dart format --set-exit-if-changed` | 512 files, 0 changed |
-| SonarCloud, `feature/pil-293` | pass |
-| CI full suite | 1358 pass, 1 skip, 0 fail |
+| 1 | Code preventing **1** of the Top 10, named in the commit message |
+| 2 | Code preventing **at least 5** of the 10, named in the commit messages |
+| 3 | A scan with Metasploit or similar, explained, with a patch plan |
+| 4 | Penetration testing with video evidence |
 
-Backend equivalents: `ruff`, `ruff format`, `mypy` strict, and
-`makemigrations --check`.
+Note the wording: *"has shown some/all of the code that **already** prevents"*.
+Pointing at existing protections counts, not only at code written this week —
+so each week marks what I **wrote** against what I am **citing**.
 
-See [Code quality](../process/quality.md), including why a green pipeline does
-not prove the application starts.
+!!! warning "The running total, stated honestly"
+    The best week so far names **three** distinct items (Sprint 2 · Week 1),
+    which is level 1, not level 2. Levels 3 and 4 need a scanning tool nothing
+    in this project currently uses. I would rather report three real items than
+    pad to five.
 
-## B6 · Security
+### Secrets handling
 
-**Claim.** OWASP Top 10 items named in the **commit message body**.
+Not an OWASP item as such, but it is where mistakes are cheapest to make:
 
-**Level, stated honestly.** The criterion scores by *count*: one item is level
-1, **five** is level 2, and levels 3–4 need a Metasploit-style scan that this
-project does not yet use.
-
-PIL-293 names A01 only. PIL-340 names three — **A01**, **A04** and **A05** —
-across [five commit bodies](https://github.com/bank-sampah-PILAH/pilah-mobile/pull/72/commits),
-with A05 (the CORS misconfiguration) explicitly labelled in the PR as a finding
-*reported*, not code in that diff.
-
-Three, not five. A08 would have been a fair fourth — the WhatsApp-draft bug is
-an integrity failure between what was stored and what was reported — and I did
-not claim it at commit time. I am recording that as a miss rather than
-back-filling it, because the point of naming the item while planning the slice
-is lost if it can be added afterwards. A03 and A07 are not genuinely engaged by
-either ticket and padding the count with them would be worth less than the
-three that are real.
-
-OWASP **A01 (Broken Access Control)** appears in five PIL-293 commits — both
-`RoleDestinations` commits, both navigation rail commits, and the navigation
-drawer. The other twenty-six have no security angle and do not claim one.
-
-The substance ([`forRole`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/features/main/presentation/widgets/role_destinations.dart#L36-L46)): one source of truth for role-to-destination mapping, so adding a
-second *or third* navigation surface cannot widen any role's menu; `forRole`
-fails closed on unknown roles; rail and drawer both render nothing without a
-session. All of it is pinned by tests.
-
-Each message states that this is **defense in depth** and names where the real
-control lives — server-side authorization plus the router redirect.
-
-!!! warning "Twice-missed, now a planning step"
-    On PIL-168 the OWASP note was in the PR body instead of the commit. On
-    PIL-293 it was missing entirely until it was caught after the PR was open,
-    then fixed by rewriting four commit messages. The remedy is to choose the
-    OWASP item while planning the slices, not when writing the commit.
-
-## B7 · AI literacy
-
-**Claim.** The context I supply is what makes the tool useful, and the
-verification I insist on is what makes its output trustworthy.
-
-**Evidence.** The full record, with my actual prompts at the points where I
-rejected or redirected what I was given, is on the
-[AI literacy](ai-literacy.md) page. Three things it shows:
-
-- **Context the tool had no way to obtain.** My lead dev's rule that the bar
-  sits at the bottom in the app and the navigation on the left in a browser
-  replaced a width-only design that was wrong in both directions. That one
-  sentence deleted a whole class of viewport workarounds from the test suite —
-  see [`navigation_form.dart`](https://github.com/bank-sampah-PILAH/pilah-mobile/blob/9d8c439/lib/design/layout/navigation_form.dart#L26-L35),
-  where the platform decides the family and width only decides how much
-  left-hand navigation fits.
-- **Corrections tallied by cause, not anecdote.** Nine corrections across the
-  sprint, and seven sit in two rows of the same table: a conclusion reached by
-  inference when direct evidence was one command away. That share was higher
-  than I expected, and the checks were all cheap.
-- **Remedies that are themselves checked.** The
-  [programming principles](../process/programming.md) page states what a
-  ticket will claim *before* its commits exist. On PIL-340 that mechanism
-  caught two false claims — and only half worked, because a reviewer noticed
-  the stale claim before I re-read my own page.
-
-**Honest limitation.** The remedy for the OWASP miss — choose the item while
-planning the slices — has now failed three times in softer and softer forms:
-missing entirely on PIL-168, missing again on PIL-293, and under-claimed on
-PIL-340. One successful application would not be evidence it holds; three
-partial failures are evidence it does not.
-
+- `.env`, Firebase credentials and `google-services.json` are never committed.
+  `.env` is a declared Flutter asset, so builds fail without it — which makes
+  the temptation to commit it real.
+- CI materialises `google-services.json` from a repository secret. When I could
+  not build a debug APK locally without it, I reported the blocker rather than
+  working around it.
+- Local QA runs with a permissive CORS setting and a fake-Google-token flag.
+  Both are development-only, documented as such, and the CORS patch described
+  in Sprint 2 · Week 1 is deliberately left **uncommitted**.

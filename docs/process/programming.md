@@ -102,3 +102,61 @@ than reverse-engineered from them.
 The honest risk: if the layout rework ends up needing changes inside
 `TransaksiCubit`, the Open/Closed claim weakens and I should say so rather than
 quietly rewording it. That is the point of writing the plan down first.
+
+## PIL-340 — what actually happened
+
+Written after slices 1–3, against the plan above. The point of stating claims
+first is that they can come out wrong, and one did.
+
+| Claim | Outcome |
+|---|---|
+| **SRP** | **Held.** `SetoranDraft` / `SetoranItemDraft` carry the rules, tested by 14 unit tests with no widget built at all. It also caught a real bug: `num.tryParse('') ?? 0.0` means clearing the weight box yields 0, and nothing stopped that 0 kg setoran reaching the server. |
+| **OCP** | **Partly, and one part refuted — see below.** |
+| **Repository / Use Case layering** | **Held.** `TransaksiCubit`, `AddTransaksiUseCase` and `TransaksiRepository` are untouched across all three slices. |
+| **DIP** | **Not yet earned.** The wide-screen tests drive the real cubit over a stubbed API rather than a mocked cubit. True, but not the claim I made. |
+
+### The claim that was wrong
+
+The plan said PIL-340 would reuse **`MasterDetailLayout`**. It does not, and
+could not:
+
+- it splits at medium (600); the setoran form needs expanded (840). Between
+  600 and 839, with the 256px rail, each column gets about 200px.
+- its panes are proportional (3:2); a summary panel wants a fixed 340px. At
+  1920 the detail pane would be 768px of mostly whitespace.
+- the summary is an always-present aggregate, not the detail of a selected
+  row — a different pattern wearing the same shape.
+
+So of the three primitives PIL-293 shipped unused, **`ContentBounds` was
+adopted, `PageStateView` is still pending (slice 4), and `MasterDetailLayout`
+is refuted.** It is still the right widget for a real list-and-detail screen
+(PIL-337+), which is what PR #70 said it was for.
+
+!!! warning "A reviewer found this, not me"
+    Heraldo flagged on PR #70 that a widget with no call sites is tested only
+    against itself, so its tests keep passing after reality diverges. Checking
+    that against PIL-340 is what exposed the stale claim — which had been
+    published on this page for days while slice 2 had already hand-rolled a
+    `Row` instead.
+
+    The mechanism half-worked. Writing the plan down first is what made the
+    claim *checkable*; it did not make me check it. That is a weaker result
+    than the one I wanted, and pretending otherwise would be the exact failure
+    this page exists to catch.
+
+### What appeared that was not planned
+
+**Strategy, again.** `PickerPresentation.resolve(width:)` picks the container
+for a modal picker — bottom sheet on a phone, centred dialog in a browser —
+with `showAdaptivePicker` owning all the container chrome. Same shape as
+`NavigationForm` in PIL-293, and arrived at for the same reason: the rule is
+worth deciding in one pure function instead of a `MediaQuery` check at each of
+the four picker call sites.
+
+Worth noting the discriminator differs on purpose. Navigation is decided by
+**platform** (the lead dev's rule — bottom bar in the app, left-hand in a
+browser), because it stays on screen. A picker is transient, so Material ties
+it to **width**. The two agree wherever it matters, since a native phone is
+always compact.
+
+The named risk — needing changes inside `TransaksiCubit` — did not materialise.

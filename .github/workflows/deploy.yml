@@ -29,8 +29,23 @@ jobs:
       - run: pip install -r requirements.txt
 
       # --strict turns warnings (dead internal links, missing nav pages) into
-      # failures, so a broken link cannot reach the published site.
+      # failures. On its own that is weaker than it sounds: an unknown #anchor
+      # is only INFO, so twelve dead anchor links once built and deployed clean.
+      # mkdocs.yml now sets validation.anchors=warn, which --strict escalates,
+      # and that combination is what actually blocks a broken link here.
       - run: mkdocs build --strict
+
+      # A line wrapping so it starts with '#' becomes a heading, which no link
+      # check can see: '#70 and approved...' once rendered as an H1 and put a
+      # nonsense entry in the table of contents. Every page has exactly one H1.
+      - name: Exactly one H1 per page
+        run: |
+          bad=0
+          while IFS= read -r f; do
+            n=$(grep -c '<h1' "$f" || true)
+            if [ "$n" -ne 1 ]; then echo "::error file=$f::expected 1 h1, found $n"; bad=1; fi
+          done < <(find site -name index.html)
+          exit $bad
 
       - uses: actions/upload-pages-artifact@v3
         with:

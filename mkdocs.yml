@@ -53,6 +53,18 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
+# MkDocs reports an unknown #anchor as INFO, which --strict ignores, so a link
+# pointing at a heading that does not exist used to build and deploy clean. It
+# happened: twelve #b6--security style links (GitHub's slug, which keeps the gap
+# left by the dropped "·") silently landed nowhere, because python-markdown
+# collapses that gap and emits #b6-security. Promoting these to warnings makes
+# --strict fail on them instead.
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
 markdown_extensions:
   - admonition
   - attr_list

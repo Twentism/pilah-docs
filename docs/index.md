@@ -53,7 +53,7 @@ lives, and other people's code is being refactored onto it. See
 about *who may change what*, and both resolve to the same shape: the server
 decides, the client reflects. When I later built role-aware navigation for the
 web shell, the same instinct produced a single source of truth for
-role-to-destination mapping. See [Sprint 1 · Week 2](ir/b/s1-w2.md#b6--security).
+role-to-destination mapping. See [Sprint 1 · Week 2](ir/b/s1-w2.md#b6-security).
 
 **Tests come first, and the commits show it.** Every delivery here is a
 sequence of `red` → `green` → `refactor` commits where the failing test is a

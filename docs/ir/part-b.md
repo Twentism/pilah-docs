@@ -90,7 +90,7 @@ existing behaviour, I break the line on purpose and watch it fail, then restore
 it. If it does not fail, it was not guarding anything.
 
 I look for the same thing when reviewing — see
-[Sprint 1 · Week 2](b/s1-w2.md#b4--peer-review) for a reviewer who did exactly
+[Sprint 1 · Week 2](b/s1-w2.md#b4-peer-review) for a reviewer who did exactly
 that to my own code.
 
 ### The rule for test doubles
@@ -156,7 +156,7 @@ so each week marks what I **wrote** against what I am **citing**.
 
     PIL-354 did not add a fourth. It moved **A05 from cited to written**: the
     CORS gap found in Sprint 1 · Week 3 is fixed in code in
-    [Sprint 2 · Week 1](b/s2-w1.md#b6--security). A better claim on the same
+    [Sprint 2 · Week 1](b/s2-w1.md#b6-security). A better claim on the same
     item, not a bigger number.
 
     Level 3 is a different axis rather than more of the same — it asks for a

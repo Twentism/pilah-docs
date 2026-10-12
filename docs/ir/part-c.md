@@ -55,7 +55,7 @@ is exactly the kind of thing that has to come from a person.
 Reviews on be #48 and #49, both on Heraldo's work. The pattern that held all
 project: I review well when the PR touches code I wrote, and less often
 otherwise. Good reviews, narrow coverage — stated again as a limitation in
-[Part B · B4](b/s1-w2.md#b4--peer-review).
+[Part B · B4](b/s1-w2.md#b4-peer-review).
 
 ### Being wrong
 

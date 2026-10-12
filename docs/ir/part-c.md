@@ -1,6 +1,10 @@
 # IR Part C — soft skills
 
-Organised by **week**, the same as [Part B](part-b.md). Part C is thinner per
+Organised into the same **week slots** as [Part B](part-b.md), which are
+reporting slots rather than the team's sprint calendar — Sprint 2 began 6
+October. The dates in the table are the real dates of the real work.
+
+Part C is thinner per
 week, so the weeks are sections here rather than separate pages — there is not
 enough in any one of them to justify its own page, and splitting would pad
 rather than clarify.

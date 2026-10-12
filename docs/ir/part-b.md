@@ -13,8 +13,16 @@ and nothing is claimed before it exists.
 | [Sprint 1 · Week 3](b/s1-w3.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 2 · Week 1](b/s2-w1.md) | 12 Oct onwards | Cross-origin custom headers in the backend (PIL-354) | B1 B2 B3 B5 B6 B7 |
 
-Sprint 2 runs to 22 Oct, so Weeks 2 and 3 do not exist yet. They are not listed
-until they have something in them, and Sprint 2 · Week 1 is still in progress.
+Sprint 2 runs to 22 Oct, so later weeks do not exist yet. They are not listed
+until they have something in them, and the last slot is still in progress.
+
+!!! info "The week headings are reporting slots, not the sprint calendar"
+    The team's Sprint 2 began **6 October** — see the schedule on the
+    [Overview](../index.md). The headings below are the slots this report is
+    organised into, and they do not line up with that boundary.
+
+    Every date in the table is the real date of the real work. Where a slot
+    label and the sprint calendar disagree, the dates are the thing to trust.
 
 Sprint 2 · Week 1 claims no B4, because no peer review happened in it. An empty
 criterion is left empty rather than filled with an affirmative comment.

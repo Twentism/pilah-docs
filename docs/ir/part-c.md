@@ -9,8 +9,8 @@ rather than clarify.
 |---|---|---|
 | [Sprint 1 · Week 1](#sprint-1-week-1) | 15–21 Sep | Learning decimal rounding modes properly |
 | [Sprint 1 · Week 2](#sprint-1-week-2) | 22–28 Sep | Asking instead of guessing; reviewing where I add value |
-| [Sprint 1 · Week 3](#sprint-1-week-3) | 29 Sep – 1 Oct | Sprint close |
-| [Sprint 2 · Week 1](#sprint-2-week-1) | 6–12 Oct | Worktrees and stacked branches; Flutter web; four blockers reported |
+| [Sprint 1 · Week 3](#sprint-1-week-3) | 6–12 Oct | Worktrees and stacked branches; Flutter web; four blockers reported |
+| [Sprint 2 · Week 1](#sprint-2-week-1) | 12 Oct onwards | Waiting for permission, then fixing a blocker that was finally mine |
 
 ---
 
@@ -68,15 +68,9 @@ otherwise. Good reviews, narrow coverage — stated again as a limitation in
 
 ## Sprint 1 Week 3
 
-Sprint review, retrospective, and Sprint 2 planning. No code.
-
-The decision that mattered: web supports **Super Admin, Pengurus and Pengurus
-Induk only**, never Nasabah. One sentence in planning that shaped every role
-check in the next sprint.
-
----
-
-## Sprint 2 Week 1
+Sprint planning set the scope this week had to respect: web supports **Super
+Admin, Pengurus and Pengurus Induk only**, never Nasabah. One sentence in a
+planning meeting that shaped every role check in PIL-293.
 
 ### Learning beyond the classroom — worktrees and stacked branches
 
@@ -137,7 +131,9 @@ separating:
   `build_runner` next.
 - The **CORS gap** I did patch, but locally and uncommitted, because the team
   confirmed it was already being handled alongside a web deployment. Fixing it
-  properly in a PR would have duplicated someone's in-flight work.
+  properly in a PR would have duplicated someone's in-flight work. Tristan
+  later cleared me to fix it for real, which became PIL-354 — see
+  [Sprint 2 Week 1](#sprint-2-week-1).
 
 ### Handling review findings
 
@@ -183,6 +179,79 @@ to check directly. Logs instead of the screen, a file list instead of a merge
 test, a version number instead of the docs. The habit I am building is to check
 the thing itself when checking is cheap — and when it is not cheap, to say
 which one I did.
+
+---
+
+## Sprint 2 Week 1
+
+### Learning beyond the classroom — what CORS actually negotiates
+
+I had treated CORS as one switch: origins in or out. It is two separate
+negotiations, and this week needed both.
+
+**Request headers** are negotiated *before* the request exists. The browser
+sends a preflight `OPTIONS` asking "may I send these headers?", and if the
+answer omits one, the real request is never sent at all — which is why the
+backend log showed `OPTIONS … 200` four times and no `POST`. The server never
+refused anything; it was never asked.
+
+**Response headers** are negotiated *after*. The response arrives complete, and
+`Access-Control-Expose-Headers` decides which of its headers JavaScript is
+allowed to read. A download can therefore succeed while the client cannot see
+the filename it came with.
+
+The practical lesson is the asymmetry: `CORS_ALLOW_ALL_ORIGINS=true` sounds
+total and governs neither of these. Permissive on one axis is not permissive on
+the others.
+
+### Working with the team — waiting for permission, then taking it seriously
+
+I found this bug in Sprint 1 Week 3 and deliberately did not fix it, because
+the team said a web deployment was already touching that area. Patching someone
+else's in-flight work is not helpfulness.
+
+When Tristan cleared it, the scope grew rather than shrank: not the one line I
+had patched locally, but the reason two files could disagree about a header name
+in the first place. Having waited for the go-ahead, the right response was to
+fix the cause rather than re-apply my workaround.
+
+The same restraint applied twice more in the same change:
+
+- `CORS_ALLOW_ALL_ORIGINS` still defaults to `true`, which is a wider exposure
+  than the one I was fixing, on a file I had open. It belongs to PIL-334 and a
+  deployment is in flight, so I **flagged it in the PR** instead of changing
+  it. Noticing it silently would have been the real failure.
+- The OWASP count stayed at three items when five would score a level higher,
+  and the PR stayed one MR when three would score a level higher. Both were
+  available by splitting or padding. Neither is work.
+
+### Being wrong
+
+!!! failure "I planned the issue under the wrong parent"
+    I had the new issue down as a sibling of PIL-340, and a `blocks` relation
+    pointing at PIL-335. Querying Linear before creating anything showed
+    PIL-340's parent is **PIL-346**, and that PIL-335 was already **Done** — a
+    blocking relation on a finished issue is noise. Both facts were one query
+    away and I had carried them for days from an earlier conversation.
+
+!!! failure "I accepted a secondhand claim about a tool"
+    I was told a Sonar CLI skill had been added to `AGENTS.md`. I looked: not
+    in either repository's current `staging`, not in `.agents/skills/`, not in
+    the global skills, and no `sonar-scanner` or `SONAR_TOKEN` present. The
+    useful answer was "it is not there, here is what I checked" rather than
+    improvising a command that would have failed. What the lead dev probably
+    meant is real and better: pushing a branch triggers SonarCloud without a PR.
+
+!!! failure "I followed a documented step that was wrong for this repository"
+    The `ship` skill copies `.agents/` into a new worktree because it is
+    "intentionally gitignored". In `pilah-be` it is **tracked**, so my copy
+    silently overwrote the current skill with a 125-commit-old version. Caught
+    only because I read `git status` afterwards. A step being written down does
+    not make it safe in a repository it was not written for.
+
+These are the same failure as the earlier weeks' — a conclusion taken on trust
+when checking was one command away. The difference this week is that I checked
+*before* acting on two of them rather than after being contradicted.
 
 ---
 

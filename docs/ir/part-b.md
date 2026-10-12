@@ -10,11 +10,14 @@ and nothing is claimed before it exists.
 |---|---|---|---|
 | [Sprint 1 · Week 1](b/s1-w1.md) | 15–21 Sep | Whole-rupiah money rules, deposit input limits | B1 B2 B3 B5 B6 |
 | [Sprint 1 · Week 2](b/s1-w2.md) | 22–28 Sep | Nasabah paging, profile-edit permissions, account linking | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 1 · Week 3](b/s1-w3.md) | 29 Sep – 1 Oct | Sprint close — no commits of mine | — |
-| [Sprint 2 · Week 1](b/s2-w1.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 1 · Week 3](b/s1-w3.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 2 · Week 1](b/s2-w1.md) | 12 Oct onwards | Cross-origin custom headers in the backend (PIL-354) | B1 B2 B3 B5 B6 B7 |
 
 Sprint 2 runs to 22 Oct, so Weeks 2 and 3 do not exist yet. They are not listed
-until they have something in them.
+until they have something in them, and Sprint 2 · Week 1 is still in progress.
+
+Sprint 2 · Week 1 claims no B4, because no peer review happened in it. An empty
+criterion is left empty rather than filled with an affirmative comment.
 
 ## Deep dives
 
@@ -101,7 +104,11 @@ The failure mode this avoids is a suite that mocks the layer directly beneath
 the one under test. It passes forever, breaks on every refactor, and never
 catches an integration bug. Worked through in full — including the practical
 difference between the two, with line-level references — in
-[Sprint 2 · Week 1](b/s2-w1.md#test-doubles-what-is-faked-and-what-it-costs).
+[Sprint 1 · Week 3](b/s1-w3.md#test-doubles-what-is-faked-and-what-it-costs).
+
+Rule 1 is not a formality. [Sprint 2 · Week 1](b/s2-w1.md#test-doubles-none-and-that-is-the-honest-answer)
+uses **no double at all**: the defect was in the configuration of a middleware,
+so a test that faked that middleware could not have caught it.
 
 ### Gates run before every push
 
@@ -144,10 +151,17 @@ Pointing at existing protections counts, not only at code written this week —
 so each week marks what I **wrote** against what I am **citing**.
 
 !!! warning "The running total, stated honestly"
-    The best week so far names **three** distinct items (Sprint 2 · Week 1),
-    which is level 1, not level 2. Levels 3 and 4 need a scanning tool nothing
-    in this project currently uses. I would rather report three real items than
-    pad to five.
+    Across every week the distinct items named in commit bodies are **A01, A04
+    and A05** — **three**, which is level 1, not level 2.
+
+    PIL-354 did not add a fourth. It moved **A05 from cited to written**: the
+    CORS gap found in Sprint 1 · Week 3 is fixed in code in
+    [Sprint 2 · Week 1](b/s2-w1.md#b6--security). A better claim on the same
+    item, not a bigger number.
+
+    Level 3 is a different axis rather than more of the same — it asks for a
+    **scan**, explained, with a patch plan, which no week here has yet. I would
+    rather report three real items and one missing scan than pad to five.
 
 ### Secrets handling
 
@@ -160,5 +174,9 @@ Not an OWASP item as such, but it is where mistakes are cheapest to make:
   not build a debug APK locally without it, I reported the blocker rather than
   working around it.
 - Local QA runs with a permissive CORS setting and a fake-Google-token flag.
-  Both are development-only, documented as such, and the CORS patch described
-  in Sprint 2 · Week 1 is deliberately left **uncommitted**.
+  Both are development-only and documented as such. The CORS patch described in
+  Sprint 1 · Week 3 was deliberately left **uncommitted** at the time, because
+  the team said the gap was already being handled. Once that was cleared it was
+  fixed properly in the backend instead — PIL-354,
+  [be #97](https://github.com/bank-sampah-PILAH/pilah-be/pull/97) — so no local
+  patch is carried any more.

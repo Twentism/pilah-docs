@@ -47,6 +47,16 @@ One standing rule, which exists because of the first entry below:
 The prompt history is retained rather than discarded. These are my actual
 prompts, at the points where I rejected or redirected what I was given.
 
+![A prompt directing the PIL-339 work: a design decision, a plan approval, and the three governing documents attached](../assets/img/ai-literacy-steering-pil-339.png)
+
+*A representative prompt, opening the PIL-339 work. In three lines I make the
+design decision the tool had asked about (the date/time picker follows the
+existing `showDatePicker` sites), approve the commit strategy (keep the refactor
+as its own commit), and attach the three governing documents — IR Guidelines,
+SDS, PRD — so the output is shaped to the rubric and the spec rather than to
+generic best practice. The generation is downstream of all three of those; the
+decisions are mine.*
+
 ??? failure "“it's only white though?” — a working app reported from a clean log"
     It told me twice that the web app was booting correctly, based on build logs
     with no errors. The page was blank white. I sent a screenshot.
@@ -95,12 +105,24 @@ prompts, at the points where I rejected or redirected what I was given.
     after twelve minutes. I stopped it and asked for an alternative. Judging when
     a suggested path is not worth the wait is my call.
 
+??? failure "“read #104 now” — stopping a security finding that was not real"
+    Reviewing a teammate's export PR, it set out expecting a cross-organisation
+    data leak — the highest-value finding it could make. I had it **verify the
+    hypothesis against the tests and the code before writing anything**, and the
+    scoping turned out already sound. So the review said that plainly and
+    reported a different, demonstrable bug instead.
+
+    A scary-but-false A01 is worse than no comment — it wastes the author's time
+    and damages the reviewer's credibility. Checking the impulse before it
+    reached the PR is the discipline, not the generation.
+
 It also corrected itself several times, kept separately because self-correction
 is cheap to claim: an asserted merge conflict that `git merge-tree` disproved, a
 current tool called deprecated from its version number, a screenshot offered as
 proof of something it did not show, a claim that nine test failures were all
-pre-existing when two were its own regression, and a test it deleted for passing
-before the fix.
+pre-existing when two were its own regression, a test it deleted for passing
+before the fix, and a PIL-339 push that skipped `dart format` and was caught by
+CI rather than locally.
 
 ## Counting the corrections
 

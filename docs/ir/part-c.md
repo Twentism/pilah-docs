@@ -265,4 +265,9 @@ I use Claude Code as a working tool, and the useful part is not the generation.
 It is being a reviewer of output that is confidently wrong sometimes.
 
 The full record, with my actual prompts at the points where I rejected or
-redirected what I was given, is **[B7 · AI literacy](ai-literacy.md)**.
+redirected what I was given, is reported **inside each week** as that week's
+B7 section — [Sprint 1 · Week 1](b/s1-w1.md#b7-ai-literacy),
+[Week 2](b/s1-w2.md#b7-ai-literacy), [Week 3](b/s1-w3.md#b7-ai-literacy) and
+[Sprint 2 · Week 1](b/s2-w1.md#b7-ai-literacy). The tally by cause, which
+only makes sense across all of them, is in
+[Part B](part-b.md#b7-how-i-use-ai).

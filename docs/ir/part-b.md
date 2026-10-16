@@ -8,10 +8,10 @@ and nothing is claimed before it exists.
 
 | Week | Dates (2026) | What shipped | Criteria with evidence |
 |---|---|---|---|
-| [Sprint 1 · Week 1](b/s1-w1.md) | 15–21 Sep | Whole-rupiah money rules, deposit input limits | B1 B2 B3 B5 B6 |
+| [Sprint 1 · Week 1](b/s1-w1.md) | 15–21 Sep | Whole-rupiah money rules, deposit input limits | B1 B2 B3 B5 B6 B7 |
 | [Sprint 1 · Week 2](b/s1-w2.md) | 22–28 Sep | Nasabah paging, profile-edit permissions, account linking | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 1 · Week 3](b/s1-w3.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 2 · Week 1](b/s2-w1.md) | 12 Oct onwards | Cross-origin custom headers in the backend (PIL-354) | B1 B2 B3 B5 B6 B7 |
+| [Sprint 2 · Week 1](b/s2-w1.md) | 12–16 Oct | Cross-origin custom headers in the backend (PIL-354), Pengurus schedule on the web (PIL-339) | B1 B2 B3 B4 B5 B6 B7 |
 
 Sprint 2 runs to 22 Oct, so later weeks do not exist yet. They are not listed
 until they have something in them, and the last slot is still in progress.
@@ -24,7 +24,7 @@ until they have something in them, and the last slot is still in progress.
     Every date in the table is the real date of the real work. Where a slot
     label and the sprint calendar disagree, the dates are the thing to trust.
 
-Sprint 2 · Week 1 claims no B4, because no peer review happened in it. An empty
+Sprint 1 · Week 1 claims no B4, because no peer review happened in it. An empty
 criterion is left empty rather than filled with an affirmative comment.
 
 ## Deep dives
@@ -39,9 +39,6 @@ paragraph inside a week:
 
 - :material-cash-register: **[PIL-340 — recording a setoran on the web](../contributions/pil-340.md)**
   Six slices, three bugs found by tests, two refuted design claims.
-
-- :material-robot-outline: **[B7 — AI literacy](ai-literacy.md)**
-  The full session record: where the tool was wrong and how it was caught.
 
 </div>
 
@@ -168,8 +165,71 @@ so each week marks what I **wrote** against what I am **citing**.
     item, not a bigger number.
 
     Level 3 is a different axis rather than more of the same — it asks for a
-    **scan**, explained, with a patch plan, which no week here has yet. I would
-    rather report three real items and one missing scan than pad to five.
+    **scan**, explained, with a patch plan. That arrived in
+    [Sprint 2 · Week 1](b/s2-w1.md#b6-security): an authenticated OWASP ZAP
+    scan of the local backend, each alert triaged into real or artefact, and a
+    patch plan for the one real finding. I would still rather report three real
+    items and a scan than pad the count to five.
+
+### B7 · how I use AI
+
+Each week's B7 section carries that week's own evidence — the context I
+supplied, and the prompts where I rejected or redirected what I was given. What
+cannot live in a single week is the **tally across all of them**, which is
+below, because a pattern is only visible once the weeks are added up.
+
+**How I use it.** Drafting, which I then read line by line — implementation,
+tests, commit bodies, PR descriptions, review comments. Running the checks and
+reporting their output: `flutter analyze`, `dart format`, the suites, the
+builds, where the output is the evidence rather than a summary of it. Driving
+the TDD cycle I specify, a failing test committed on its own and then the
+smallest change that passes it. And browser QA automation against a running
+app, which produced the screenshots in the
+[PIL-293 case study](../contributions/pil-293.md).
+
+One standing rule, which exists because of the blank-page incident in
+[Sprint 1 · Week 3](b/s1-w3.md#b7-ai-literacy):
+
+!!! important "It does not get to tell me something works"
+    A claim that a build passes, a test is unrelated, or a page renders has to
+    arrive with the command and its output. Without that I do not accept it.
+
+**Counting the corrections.** Anecdotes do not show a pattern; tallying them by
+*cause* does. This tally changed how I work more than any single incident did.
+
+| Cause | Count | Incidents |
+|---|---|---|
+| Claimed verified, verification too narrow | 3 | blank page from clean logs (×2), "all nine failures pre-existing", content-cap screenshot |
+| Inferred instead of checked directly | 2 | merge conflict never tested, tool called deprecated from its version number |
+| Requirement known but not built into planning | 2 | OWASP missing from commits on PIL-168, then again on PIL-293 |
+| Claim stronger than the evidence | 2 | PR split "required" by the rubric, Android build "blocked" |
+
+Seven of nine sit in the top two rows, and both rows are the same underlying
+mistake: a conclusion reached by inference when direct evidence was one command
+away. That share was higher than I expected, and it is not a knowledge problem
+— the checks were all cheap.
+
+**What changed as a result**, in order of how much each has since caught:
+
+1. **Screenshots replaced log tails** for anything user-visible.
+2. **"Verified" must name its scope** — *which* files were run, which is what
+   would have exposed the two untested ones.
+3. **The OWASP item is chosen at slice-planning time**, not at commit time. Two
+   misses of the same shape meant the remedy had to move earlier in the process
+   rather than be applied harder at the end.
+4. **Plans written before the work** — the
+   [programming principles](b/s1-w3.md#b2-programming-principles) page states
+   what PIL-340 will claim before its commits exist, so the claim can be
+   checked against them instead of reverse-engineered from them.
+
+Item 3 is still open: it has recurred once, and one successful application is
+not yet evidence the fix holds.
+
+**Why the record includes my own mistakes.** Several entries make my own
+earlier statements look wrong too — the Android blocker I reported as blocking
+turned out to need only a config file present, and I had accepted the "nine
+pre-existing failures" claim before CI contradicted it. That is deliberate. A
+log of AI use containing no disagreements is not a log of AI use.
 
 ### Secrets handling
 

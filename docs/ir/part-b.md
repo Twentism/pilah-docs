@@ -12,9 +12,10 @@ and nothing is claimed before it exists.
 | [Sprint 1 · Week 2](b/s1-w2.md) | 22–28 Sep | Nasabah paging, profile-edit permissions, account linking | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 1 · Week 3](b/s1-w3.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 2 · Week 1](b/s2-w1.md) | 12–16 Oct | Cross-origin custom headers in the backend (PIL-354), Pengurus schedule on the web (PIL-339) | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 2 · Week 2](b/s2-w2.md) | 17–23 Oct | Jenis sampah and harga on the web (PIL-338); a reflected XSS fixed and a Content-Security-Policy added | B1 B2 B3 B4 B5 B6 B7 |
 
-Sprint 2 runs to 22 Oct, so later weeks do not exist yet. They are not listed
-until they have something in them, and the last slot is still in progress.
+Sprint 3 begins 27 Oct, so later weeks do not exist yet. They are not listed
+until they have something in them.
 
 !!! info "The week headings are reporting slots, not the sprint calendar"
     The team's Sprint 2 began **6 October** — see the schedule on the
@@ -156,8 +157,13 @@ Pointing at existing protections counts, not only at code written this week —
 so each week marks what I **wrote** against what I am **citing**.
 
 !!! warning "The running total, stated honestly"
-    Across every week the distinct items named in commit bodies are **A01, A04
-    and A05** — **three**, which is level 1, not level 2.
+    Across every week the distinct items named in commit bodies are **A01,
+    A03, A04 and A05** — **four**, which is still level 1, not level 2.
+
+    **A03 (Injection / XSS) is new in [Sprint 2 · Week 2](b/s2-w2.md#b6-security)**
+    and is the first genuinely new item since Sprint 1: an unauthenticated
+    reflected XSS in the OAuth popup, fixed across three `green` commits, one
+    per output context.
 
     PIL-354 did not add a fourth. It moved **A05 from cited to written**: the
     CORS gap found in Sprint 1 · Week 3 is fixed in code in
@@ -199,15 +205,24 @@ One standing rule, which exists because of the blank-page incident in
 
 | Cause | Count | Incidents |
 |---|---|---|
-| Claimed verified, verification too narrow | 3 | blank page from clean logs (×2), "all nine failures pre-existing", content-cap screenshot |
-| Inferred instead of checked directly | 2 | merge conflict never tested, tool called deprecated from its version number |
+| Claimed verified, verification too narrow | 5 | blank page from clean logs (×2), "all nine failures pre-existing", content-cap screenshot, `collectstatic` run locally then called green |
+| A test that passed without testing anything | 4 | `</script>` slicing that hid the injection, `DEBUG` compared three wrong ways, a test skipped in CI only, an escape map that was a no-op |
+| Inferred instead of checked directly | 3 | merge conflict never tested, tool called deprecated from its version number, `DJANGO_DEBUG` blamed before reading `ci.yml` |
 | Requirement known but not built into planning | 2 | OWASP missing from commits on PIL-168, then again on PIL-293 |
-| Claim stronger than the evidence | 2 | PR split "required" by the rubric, Android build "blocked" |
+| Claim stronger than the evidence | 3 | PR split "required" by the rubric, Android build "blocked", a `refactor` commit claiming no behaviour change while carrying one |
 
-Seven of nine sit in the top two rows, and both rows are the same underlying
-mistake: a conclusion reached by inference when direct evidence was one command
-away. That share was higher than I expected, and it is not a knowledge problem
-— the checks were all cheap.
+Seventeen incidents, and the shape has shifted. The top two rows are **nine of
+them**, and they are the same underlying mistake in two costumes: a conclusion
+reached without the one check that would have settled it. Row 1 is believing my
+own environment; row 2 is believing my own test.
+
+Row 2 is new, and it only became visible once there were four of them. A test
+that passes is not evidence that it would fail, and four times this project has
+produced a green assertion over code that was wrong — twice because the
+technique for reading the evidence excluded it, once because the setting being
+compared was not the setting in force, once because the test never ran at all.
+That is what moved manual mutation testing from something I did occasionally to
+something every guard added after green now gets.
 
 **What changed as a result**, in order of how much each has since caught:
 
@@ -222,8 +237,19 @@ away. That share was higher than I expected, and it is not a knowledge problem
    what PIL-340 will claim before its commits exist, so the claim can be
    checked against them instead of reverse-engineered from them.
 
-Item 3 is still open: it has recurred once, and one successful application is
-not yet evidence the fix holds.
+Item 3 is still open, and the record got worse before it got better: PIL-338's
+twelve commits carried no OWASP line at all. The honest reading is that a
+layout-and-lifecycle ticket had no claim to make — but "there was none to make"
+has to be *stated at planning time*, which is the discipline the remedy was
+supposed to install. The security work the same week names its items in every
+`green` commit, so the remedy works when the slice has a claim; it is the
+decision that there is none which is still not being recorded.
+
+A fifth change, from [Sprint 2 · Week 2](b/s2-w2.md#b7-ai-literacy):
+
+5. **Every guard added after green is proved by breaking what it protects.**
+   Six such mutations in that week alone. This is the direct consequence of row
+   2 of the tally above — it exists because four tests passed over broken code.
 
 **Why the record includes my own mistakes.** Several entries make my own
 earlier statements look wrong too — the Android blocker I reported as blocking

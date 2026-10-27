@@ -1,8 +1,9 @@
 # IR Part C — soft skills
 
-Organised into the same **week slots** as [Part B](part-b.md), which are
-reporting slots rather than the team's sprint calendar — Sprint 2 began 6
-October. The dates in the table are the real dates of the real work.
+Organised into the same **week slots** as [Part B](part-b.md). The last two
+sit exactly in their claim windows; the two before them were written before
+those windows were fixed and report work a few days later than their heading
+suggests. The dates in the table are the real dates of the real work.
 
 Part C is thinner per
 week, so the weeks are sections here rather than separate pages — there is not
@@ -14,7 +15,9 @@ rather than clarify.
 | [Sprint 1 · Week 1](#sprint-1-week-1) | 15–21 Sep | Learning decimal rounding modes properly |
 | [Sprint 1 · Week 2](#sprint-1-week-2) | 22–28 Sep | Asking instead of guessing; reviewing where I add value |
 | [Sprint 1 · Week 3](#sprint-1-week-3) | 6–12 Oct | Worktrees and stacked branches; Flutter web; four blockers reported |
-| [Sprint 2 · Week 1](#sprint-2-week-1) | 12 Oct onwards | Waiting for permission, then fixing a blocker that was finally mine |
+| [Sprint 2 · Week 1](#sprint-2-week-1) | 12–16 Oct | Waiting for permission, then fixing a blocker that was finally mine |
+| [Sprint 2 · Week 2](#sprint-2-week-2) | 13–19 Oct | A defect my own refactor created, and a reviewer who found it |
+| [Sprint 2 · Week 3](#sprint-2-week-3) | 20–26 Oct | Disagreeing with an approver, with evidence; seven findings answered |
 
 ---
 
@@ -259,6 +262,147 @@ when checking was one command away. The difference this week is that I checked
 
 ---
 
+## Sprint 2 Week 2
+
+### Learning beyond the classroom — an async result can outlive the state that started it
+
+A bottom sheet lives for exactly one row. A side panel does not: selecting
+another row refills the same form. Moving a form from one container to the
+other changes its **lifetime**, and I did not think of that as a change at all
+— the extraction was behaviour-preserving by every test I had.
+
+It is not. A save dispatched for row A can return after the panel has moved to
+row B, close the panel the user is filling, and attach a server field error to
+a field that does not belong to it. The remedy is a generation counter: record
+the row's generation before the request, compare after, and suppress only the
+parts that touch the form — the success notification still shows, because the
+request really did happen.
+
+The general rule I took from it: **a component reused across containers
+inherits the longest lifetime of any of them**, and every `await` inside it
+then has to ask whether the world it returns to is the one it left. That is not
+a Flutter fact; it is the same shape as a stale HTTP response, or a cancelled
+job writing its result anyway.
+
+### Working with the team — a comment that arrived too late to act on in place
+
+TrayMachi left a `[P2]` on PIL-339's PR after it had already merged. The cheap
+response is to fold the fix into whatever branch is open next, where it
+disappears into a feature diff and the reviewer never sees an answer.
+
+It went out as [its own PR](b/s2-w2.md#a-panel-that-outlived-its-window)
+instead — four commits, with tests that fail without the fix. A late review
+comment is still a review comment, and the person who wrote it should be able
+to see what happened to it.
+
+### Being wrong
+
+!!! failure "My refactor created the bug, and a reviewer found it, not my tests"
+    The extraction in `0eab55fb` passes every test it had and is still the
+    change that made a late save able to close another row's panel. Every test
+    I wrote held the selection still, so the suite was structurally blind to
+    it. Scallss found it by reading the PR. It is credited in the commit body
+    of the fix, because the alternative — fixing it quietly — would make my own
+    record look better than it was.
+
+!!! failure "I read a green tick instead of the issue count"
+    The first push of PR #126 was green on CI with **five** open SonarCloud
+    issues. This is the exact lesson PR #70 had already taught me: the quality
+    gate can pass while issues remain. I had written that down and still read
+    the tick.
+
+---
+
+## Sprint 2 Week 3
+
+### Learning beyond the classroom — what a CSP nonce does and does not authorise
+
+Four things about Content-Security-Policy that I had wrong or had never
+considered, each of which changed the implementation:
+
+- **CSP fails open.** Browsers ignore directives they do not recognise, so
+  `frame-ancestor` instead of `frame-ancestors` yields a header that looks
+  right, passes any test matching on text, and protects nothing. That single
+  fact is why the policy is assembled by a Builder with one method per
+  directive rather than written as strings.
+- **A nonce authorises a `<style>` *element*, never a `style=` *attribute*.**
+  Attributes can only be permitted by `'unsafe-inline'`, which is exactly what
+  the policy exists to avoid. Two inline style attributes had to move into a
+  nonced block instead of being accommodated.
+- **A signature proves integrity, not safety.** `TimestampSigner` proves the
+  server produced a value; it says nothing about whether printing that value is
+  safe. The signed `next` parameter did not block the injected payload — it
+  laundered it.
+- **Middleware ordering decides whether a response gets a header at all.** A
+  layer that returns early never reaches the view, so anything below it never
+  runs. Choosing the policy in the *response* phase is what makes the outermost
+  position safe.
+
+Also learned by using it: `drf-spectacular` ships
+`SpectacularSwaggerSplitView` specifically for strict CSP — it serves the
+initialisation script as its own file instead of inline. The upstream answer
+existed and was better than the workaround I would have written.
+
+### Handling review findings — disagreeing with an approver, with evidence
+
+The most useful finding of the week came with a fix attached, and the fix does
+not work. The suggestion was to set `response.csp_nonce` in the developer page
+the way the OAuth popup does; doing that selects the closed-document policy
+`default-src 'none'`, which blocks the page's CDN assets and its Google script.
+It trades one dead page for another.
+
+Two things mattered in how that was handled. First, it was **applied and
+loaded** before being argued with — the finding was right and the remedy was
+wrong, and only running it shows which is which. Second, the reply says where
+it deviated from the suggestion and why, rather than silently implementing
+something different and marking the thread resolved. The reviewer had already
+approved; their finding still changed the code more than any other.
+
+All seven findings across the two PRs were answered **in their own threads**,
+each naming the commit that fixed it, and both PRs merged the same day. A
+single summary comment would have been faster to write and much harder for a
+reviewer to check.
+
+### Working with the team — splitting so the urgent half can move
+
+The XSS fix and the CSP policy touch the same function and could have been one
+pull request. They were two, stacked, because one of them fixes a live
+unauthenticated vulnerability on a deployed backend and the other is a policy
+refactor that changes renderer configuration for the whole API.
+
+That turned out to be the right read: the fix was approved with two docstring
+nits, while the policy drew a medium finding that took a full revision to
+answer. Bundled, the vulnerability fix would have waited for that.
+
+It cost something too, and both costs are written down rather than left for the
+next person to discover: SonarCloud cannot analyse a PR whose base branch is
+not itself analysed, and the rebase at merge time changed every commit hash in
+the second PR.
+
+### Being wrong
+
+!!! failure "I accepted a reviewer's fix before running it"
+    It came from someone who had just approved the PR, it matched a pattern
+    already in the codebase, and it was wrong for this page. The habit that
+    caught it is the one this project keeps relearning: load the thing and look
+    at it. Written up in
+    [Sprint 2 · Week 3](b/s2-w3.md#the-review-round).
+
+!!! failure "A contract my PR stated, and did not keep"
+    The PR said "every response carries a policy". It did not: the middleware
+    sat last, so the CORS preflight, the HTTPS redirect and the disallowed-Host
+    400 all shipped without one. No test of mine could have caught it, and none
+    did — alghani46 found it by reading `MIDDLEWARE`. Stating a contract is not
+    the same as checking the places it has to hold.
+
+!!! failure "I reported nine test failures that were four of my own making"
+    My first full-suite figure for the week blamed the repository for failures
+    my own `DJANGO_DEBUG=true` invocation had caused. Isolated afterwards by
+    re-running on a clean worktree with the flag and then without it — which is
+    what should have happened before reporting a number at all.
+
+---
+
 ## Across every week — AI literacy
 
 I use Claude Code as a working tool, and the useful part is not the generation.
@@ -267,7 +411,9 @@ It is being a reviewer of output that is confidently wrong sometimes.
 The full record, with my actual prompts at the points where I rejected or
 redirected what I was given, is reported **inside each week** as that week's
 B7 section — [Sprint 1 · Week 1](b/s1-w1.md#b7-ai-literacy),
-[Week 2](b/s1-w2.md#b7-ai-literacy), [Week 3](b/s1-w3.md#b7-ai-literacy) and
-[Sprint 2 · Week 1](b/s2-w1.md#b7-ai-literacy). The tally by cause, which
+[Week 2](b/s1-w2.md#b7-ai-literacy), [Week 3](b/s1-w3.md#b7-ai-literacy),
+[Sprint 2 · Week 1](b/s2-w1.md#b7-ai-literacy),
+[Sprint 2 · Week 2](b/s2-w2.md#b7-ai-literacy) and
+[Sprint 2 · Week 3](b/s2-w3.md#b7-ai-literacy). The tally by cause, which
 only makes sense across all of them, is in
 [Part B](part-b.md#b7-how-i-use-ai).

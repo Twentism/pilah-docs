@@ -12,21 +12,31 @@ and nothing is claimed before it exists.
 | [Sprint 1 · Week 2](b/s1-w2.md) | 22–28 Sep | Nasabah paging, profile-edit permissions, account linking | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 1 · Week 3](b/s1-w3.md) | 6–12 Oct | Responsive web shell (PIL-293), setoran on web (PIL-340) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 2 · Week 1](b/s2-w1.md) | 12–16 Oct | Cross-origin custom headers in the backend (PIL-354), Pengurus schedule on the web (PIL-339) | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 2 · Week 2](b/s2-w2.md) | 17–23 Oct | Jenis sampah and harga on the web (PIL-338); a reflected XSS fixed and a Content-Security-Policy added | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 2 · Week 2](b/s2-w2.md) | 13–19 Oct | Jenis sampah and harga on the web (PIL-338), and the panel-breakpoint defect PIL-339 shipped | B1 B2 B3 B5 B7 |
+| [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
 
-Sprint 3 begins 27 Oct, so later weeks do not exist yet. They are not listed
-until they have something in them.
+Sprint 2 closed on 26 Oct and Sprint 3 begins 27 Oct, so later weeks do not
+exist yet. They are not listed until they have something in them.
 
-!!! info "The week headings are reporting slots, not the sprint calendar"
-    The team's Sprint 2 began **6 October** — see the schedule on the
-    [Overview](../index.md). The headings below are the slots this report is
-    organised into, and they do not line up with that boundary.
+!!! info "Two of the week headings are reporting slots, not claim windows"
+    The claim windows are now fixed: Sprint 2 ran **6–12 Oct** (Week 1),
+    **13–19 Oct** (Week 2) and **20–26 Oct** (Week 3). The last two pages sit
+    exactly in theirs.
+
+    The two earlier pages do not, and are left as submitted rather than
+    retrofitted: **Sprint 1 · Week 3** reports work done 6–12 Oct, and
+    **Sprint 2 · Week 1** reports work done 12–16 Oct. Each carries a note
+    saying so.
 
     Every date in the table is the real date of the real work. Where a slot
-    label and the sprint calendar disagree, the dates are the thing to trust.
+    label and a claim window disagree, the dates are the thing to trust, and
+    nothing is claimed on two pages.
 
-Sprint 1 · Week 1 claims no B4, because no peer review happened in it. An empty
-criterion is left empty rather than filled with an affirmative comment.
+Sprint 1 · Week 1 claims no B4, because no peer review happened in it, and
+Sprint 2 · Week 2 claims none because its two reviews are reported on the
+adjacent page. Sprint 2 · Week 2 also claims no B6: PIL-338 had no honest OWASP
+claim to make. An empty criterion is left empty rather than filled with an
+affirmative comment.
 
 ## Deep dives
 
@@ -160,7 +170,7 @@ so each week marks what I **wrote** against what I am **citing**.
     Across every week the distinct items named in commit bodies are **A01,
     A03, A04 and A05** — **four**, which is still level 1, not level 2.
 
-    **A03 (Injection / XSS) is new in [Sprint 2 · Week 2](b/s2-w2.md#b6-security)**
+    **A03 (Injection / XSS) is new in [Sprint 2 · Week 3](b/s2-w3.md#b6-security)**
     and is the first genuinely new item since Sprint 1: an unauthenticated
     reflected XSS in the OAuth popup, fixed across three `green` commits, one
     per output context.
@@ -174,8 +184,10 @@ so each week marks what I **wrote** against what I am **citing**.
     **scan**, explained, with a patch plan. That arrived in
     [Sprint 2 · Week 1](b/s2-w1.md#b6-security): an authenticated OWASP ZAP
     scan of the local backend, each alert triaged into real or artefact, and a
-    patch plan for the one real finding. I would still rather report three real
-    items and a scan than pad the count to five.
+    patch plan for the one real finding. That plan was implemented and merged
+    in [Sprint 2 · Week 3](b/s2-w3.md#the-patch-plan-from-week-1-now-implemented-and-merged);
+    the before/after re-scan is still outstanding. I would still rather report
+    four real items and a scan than pad the count to five.
 
 ### B7 · how I use AI
 
@@ -207,11 +219,11 @@ One standing rule, which exists because of the blank-page incident in
 |---|---|---|
 | Claimed verified, verification too narrow | 5 | blank page from clean logs (×2), "all nine failures pre-existing", content-cap screenshot, `collectstatic` run locally then called green |
 | A test that passed without testing anything | 4 | `</script>` slicing that hid the injection, `DEBUG` compared three wrong ways, a test skipped in CI only, an escape map that was a no-op |
-| Inferred instead of checked directly | 3 | merge conflict never tested, tool called deprecated from its version number, `DJANGO_DEBUG` blamed before reading `ci.yml` |
-| Requirement known but not built into planning | 2 | OWASP missing from commits on PIL-168, then again on PIL-293 |
+| Inferred instead of checked directly | 4 | merge conflict never tested, tool called deprecated from its version number, `DJANGO_DEBUG` blamed before reading `ci.yml`, a reviewer's suggested fix applied before being run |
+| Requirement known but not built into planning | 3 | OWASP missing from commits on PIL-168, then again on PIL-293, then PIL-338's "no claim here" never written down |
 | Claim stronger than the evidence | 3 | PR split "required" by the rubric, Android build "blocked", a `refactor` commit claiming no behaviour change while carrying one |
 
-Seventeen incidents, and the shape has shifted. The top two rows are **nine of
+Nineteen incidents, and the shape has shifted. The top two rows are **nine of
 them**, and they are the same underlying mistake in two costumes: a conclusion
 reached without the one check that would have settled it. Row 1 is believing my
 own environment; row 2 is believing my own test.
@@ -241,11 +253,14 @@ Item 3 is still open, and the record got worse before it got better: PIL-338's
 twelve commits carried no OWASP line at all. The honest reading is that a
 layout-and-lifecycle ticket had no claim to make — but "there was none to make"
 has to be *stated at planning time*, which is the discipline the remedy was
-supposed to install. The security work the same week names its items in every
-`green` commit, so the remedy works when the slice has a claim; it is the
-decision that there is none which is still not being recorded.
+supposed to install. The security work the following week names its items in
+every `green` commit, so the remedy works when the slice has a claim; it is the
+decision that there is none which is still not being recorded. The two weeks
+sit side by side in [Sprint 2 · Week 2](b/s2-w2.md#b6-security) and
+[Sprint 2 · Week 3](b/s2-w3.md#b6-security), which is the clearest evidence
+either way.
 
-A fifth change, from [Sprint 2 · Week 2](b/s2-w2.md#b7-ai-literacy):
+A fifth change, from [Sprint 2 · Week 3](b/s2-w3.md#b7-ai-literacy):
 
 5. **Every guard added after green is proved by breaking what it protects.**
    Six such mutations in that week alone. This is the direct consequence of row

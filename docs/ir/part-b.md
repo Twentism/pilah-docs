@@ -181,13 +181,23 @@ so each week marks what I **wrote** against what I am **citing**.
     item, not a bigger number.
 
     Level 3 is a different axis rather than more of the same — it asks for a
-    **scan**, explained, with a patch plan. That arrived in
+    **scan**, explained, with a patch plan, and it is **met**. That arrived in
     [Sprint 2 · Week 1](b/s2-w1.md#b6-security): an authenticated OWASP ZAP
     scan of the local backend, each alert triaged into real or artefact, and a
-    patch plan for the one real finding. That plan was implemented and merged
-    in [Sprint 2 · Week 3](b/s2-w3.md#the-patch-plan-from-week-1-now-implemented-and-merged);
-    the before/after re-scan is still outstanding. I would still rather report
-    four real items and a scan than pad the count to five.
+    patch plan for the one real finding. The plan was then implemented and
+    merged in
+    [Sprint 2 · Week 3](b/s2-w3.md#the-patch-plan-from-week-1-now-implemented-and-merged),
+    which level 3 does not even require.
+
+    **Level 4 is out of reach, and not for want of a re-scan.** It asks for
+    penetration testing *with a video of the process*. There is no video, so
+    level 3 is the ceiling. The re-scan matters for the Part A Secure
+    Programming row, which wants the before **and after** of code fixed on the
+    basis of a screening — see
+    [Sprint 2 · Week 3](b/s2-w3.md#where-this-week-lands-in-part-a).
+
+    I would still rather report four real items and a scan than pad the count
+    to five.
 
 ### B7 · how I use AI
 

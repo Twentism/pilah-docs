@@ -14,7 +14,7 @@ and nothing is claimed before it exists.
 | [Sprint 2 · Week 1](b/s2-w1.md) | 12–16 Oct | Cross-origin custom headers in the backend (PIL-354), Pengurus schedule on the web (PIL-339) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 2 · Week 2](b/s2-w2.md) | 13–19 Oct | Jenis sampah and harga on the web (PIL-338), and the panel-breakpoint defect PIL-339 shipped | B1 B2 B3 B5 B7 |
 | [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | *In progress.* Two performance reviews on the customer-ID search ticket, backend and Flutter | B4 |
+| [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | *In progress.* Two performance reviews on the customer-ID search ticket, backend and Flutter | B4 B7 |
 
 Sprint 3 began on 27 Oct. Its Week 1 page exists but is **partial**: it
 claims only the criterion it already has evidence for, and the rest of the

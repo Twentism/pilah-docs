@@ -18,6 +18,7 @@ rather than clarify.
 | [Sprint 2 · Week 1](#sprint-2-week-1) | 12–16 Oct | Waiting for permission, then fixing a blocker that was finally mine |
 | [Sprint 2 · Week 2](#sprint-2-week-2) | 13–19 Oct | A defect my own refactor created, and a reviewer who found it |
 | [Sprint 2 · Week 3](#sprint-2-week-3) | 20–26 Oct | Disagreeing with an approver, with evidence; seven findings answered |
+| [Sprint 3 · Week 1](#sprint-3-week-1) | 27 Oct – 2 Nov | Two framework mechanisms behind one button; reviewing a teammate's code I had never touched |
 
 ---
 
@@ -401,6 +402,131 @@ the second PR.
     re-running on a clean worktree with the flag and then without it — which is
     what should have happened before reporting a number at all.
 
+## Sprint 3 Week 1
+
+### Learning beyond the classroom — one button, two different mechanisms
+
+The side sheet had to close when the browser's Back button was pressed. I
+assumed that was one problem. It was two, and neither is something I had met
+before.
+
+**First:** a panel opened with `showGeneralDialog` never enters go_router's
+page list, so it creates **no browser history entry at all**. I measured it
+rather than assuming — `history.length` stayed at 4 when the panel opened, and
+the URL never changed — which meant Back was popping the *page underneath* the
+panel. On a dirty form that navigated the whole shell away and destroyed what
+had been typed.
+
+**Second, and the part I would not have predicted:** making the panel a real
+declared route fixed *where* Back lands, and the discard guard still did not
+run. `PopScope` is a `PopEntry`, and only `Navigator.maybePop` consults it. A
+browser history traversal does not pop anything — go_router's
+`RouteInformationProvider` hands the new location to the delegate, the delegate
+rebuilds the page list, and the page is removed **declaratively**. Nothing
+calls `maybePop`, so the guard is never asked. The hook that does cover it is
+`GoRoute.onExit`.
+
+What I actually learned is smaller and more useful than either fact: a scrim
+tap and a Back press look like the same action to a user and travel through
+entirely different machinery. Fixing one says nothing about the other, and the
+only way I found that out was by driving the built app and watching.
+
+### Learning beyond the classroom — design patterns that are already there
+
+I had been taught design patterns as things you build: write the abstract
+creator, write the concrete subclass. Flutter had already written them.
+`Page.createRoute` **is** Factory Method, and `PageRoute` filling in `opaque`,
+`buildPage` and `buildTransitions` **is** Template Method, with the framework
+owning the algorithm.
+
+Recognising a pattern I did not write, and then deciding to participate in it
+rather than hand-roll an overlay, turned out to be a different skill from
+implementing one from a diagram. It also paid: `opaque => false` is a single
+inherited hook, and it is the entire requirement of the ticket.
+
+### Learning beyond the classroom — a measurement tool has a model of your repo
+
+SonarCloud analyses **one** long-lived branch on this project's plan. My second
+pull request is stacked on my first, so its real base is a branch Sonar has
+never analysed — and rather than failing, it quietly fell back to `staging` and
+reported a coverage number covering **both** pull requests' changes.
+
+I found it by comparing the base Sonar recorded against the base GitHub shows.
+The general lesson is the one worth keeping: a quality tool is not measuring
+your repository, it is measuring its own model of your repository, and when
+your branching does not fit that model it still returns a number. The number is
+withheld from [B5](b/s3-w1.md#b5-code-quality) for that reason.
+
+### Working with the team — reviewing code I had never touched
+
+Earlier in this project I wrote down a limitation about myself: I review well
+when a pull request touches code I wrote, and less reliably otherwise. Both of
+this week's reviews were on **Vegard's** work, and the backend half was a
+ledger change in an app I had never opened.
+
+I reviewed it by tracing **every** `Transaksi` query site in `apps/` instead of
+trusting the table in the description, and reported that no filter had been
+missed — then raised three things it had not covered, including that
+`Transaksi` declares no indexes at all while its sibling `Pencairan` does,
+which bulk voiding turns from tolerable into a real cost.
+
+Across the project that limitation has now closed properly: **12 of my
+teammates' pull requests reviewed, covering all four of them** — Ghani four,
+Pascal three, Vegard three, Heraldo two.
+
+### Working with the team — saying what was not wrong
+
+On the mobile half I went in looking for one specific defect class first:
+async lifetime, the bug that had already bitten the harga panel, the jadwal
+panel and my own side sheet in the same week. It came back **clean**, and I
+said so in the review.
+
+That is deliberate. A review that lists only problems leaves the author
+knowing what I disliked and not what I actually examined — and "I checked the
+thing that broke three other panels, and this one is fine" is more useful to
+them than silence on it.
+
+### Handling review findings
+
+Four findings on the side-sheet pull request, from two reviewers, and the most
+useful fact about them is that **two people found the same bug independently**:
+with no guard attached, the panel could not be closed at all, by scrim, Escape
+or Back. Tristan tagged it 🔴; Ghani reached it from a different direction. All
+four were fixed test-first, each with its own failing commit before the fix.
+
+On the Pengumuman removal, Vegard corrected a claim I had made in my own pull
+request body — that the untouched test suites proved the feature was
+restorable. They guard the *pages*; the route-level guards had gone out with
+the builders. He was right, and the fix is now the best test on that branch.
+
+### Being wrong
+
+!!! failure "The most load-bearing fact in my plan was stale by the time I used it"
+    The plan turned on seven cubits being provided above `MaterialApp.router`,
+    which I had verified by reading the file. Overnight someone replaced Bloc
+    with Riverpod and that provider ceased to exist. The conclusion survived,
+    but by luck rather than method. On a repository where `staging` moves forty
+    commits in two days, a fact verified on day one is not a fact on day two.
+
+!!! failure "I wrote a test seam production was forbidden to use"
+    I injected the platform through an `@visibleForTesting` parameter. That
+    annotation means precisely *production must not pass this*, while `kIsWeb`
+    being a compile-time constant means production is exactly what has to. It
+    read as the tidy, disciplined choice and it was a back door. The project
+    already had the right idiom — a plain explicit argument — three files away.
+
+!!! failure "My own pull request body claimed something the browser disproved"
+    It justified the container with "a real route: Esc, browser back and
+    `Navigator.pop` all close it". Browser back did not close it. The claim was
+    already sitting in a pull request awaiting review when I found out, by
+    running the app rather than by re-reading the sentence.
+
+!!! failure "I reported the Android build as blocked, and it never was"
+    `JAVA_HOME` pointed at a JRE, which has no compiler, while a real JDK sat
+    installed alongside it. I had recorded that build as impossible on this
+    machine in an earlier week, and used it as a reason to skip verifying on a
+    real device. This week it built in about six minutes.
+
 ---
 
 ## Across every week — AI literacy
@@ -413,7 +539,75 @@ redirected what I was given, is reported **inside each week** as that week's
 B7 section — [Sprint 1 · Week 1](b/s1-w1.md#b7-ai-literacy),
 [Week 2](b/s1-w2.md#b7-ai-literacy), [Week 3](b/s1-w3.md#b7-ai-literacy),
 [Sprint 2 · Week 1](b/s2-w1.md#b7-ai-literacy),
-[Sprint 2 · Week 2](b/s2-w2.md#b7-ai-literacy) and
-[Sprint 2 · Week 3](b/s2-w3.md#b7-ai-literacy). The tally by cause, which
+[Sprint 2 · Week 2](b/s2-w2.md#b7-ai-literacy),
+[Sprint 2 · Week 3](b/s2-w3.md#b7-ai-literacy) and
+[Sprint 3 · Week 1](b/s3-w1.md#b7-ai-literacy). The tally by cause, which
 only makes sense across all of them, is in
 [Part B](part-b.md#b7-how-i-use-ai).
+
+---
+
+## Across every week — time allocation and output
+
+The commitment criterion is scored on *"discipline allocating time per weeks"*
+and on *"the quality and quantity of works"*, so both are measured here rather
+than asserted.
+
+### Hours
+
+| Week (Mon–Sun) | Hours |
+|---|---|
+| 14 – 20 Sep | 5.2 |
+| 21 – 27 Sep | 12.8 |
+| 28 Sep – 4 Oct | 6.0 |
+| 5 – 11 Oct | 15.3 |
+| 12 – 18 Oct | 16.7 |
+| 19 – 25 Oct | 3.2 |
+| 26 Oct – 1 Nov | 11.2 |
+| 2 – 3 Nov *(partial)* | 5.2 |
+| **Total** | **75.5 hours** |
+
+Spread over **35 distinct working days** inside a 49-day calendar span, 16
+September to 3 November, across 16 working sessions.
+
+!!! info "What this number is, and what it is not"
+    It is measured, not estimated. Every session this project has run is
+    logged with a timestamp per event; the figure above sums the gaps between
+    consecutive events and **discards any gap longer than 30 minutes** on the
+    assumption that I had stopped working. That makes it deliberately
+    conservative.
+
+    It counts only time spent **at the keyboard in a working session.** It does
+    not count class, team meetings, reading teammates' pull requests on GitHub,
+    Linear, Discord, manual browser QA, testing on a physical handset, or any
+    of the thinking that happens away from the machine. The real figure is
+    higher than 75.5 and I cannot measure by how much, so I am reporting the
+    part I can defend rather than the part that would read better.
+
+    Read as a weekly average it is about **10 hours**, below the 17-hour
+    benchmark. Two things are worth saying plainly about that. The first is
+    that the unmeasured categories above are exactly where the rest of a
+    software-engineering week goes. The second is that the criterion's own top
+    band does not ask for the number at all — *"does not have to exceed 17
+    hours per week. What matters is that the work quality is significant"* —
+    so the output below is the evidence that actually matters, and the hours
+    are context for it.
+
+    The dip in **19 – 25 Oct** is real and not hidden: that week went to a
+    pull request that was blocked on a conflict and on review rather than on
+    work of mine.
+
+### Output
+
+| | Count |
+|---|---|
+| Commits authored | **341** — 111 backend, 230 mobile |
+| Pull requests opened | **20** — 17 merged, 1 withdrawn, 2 still open |
+| Teammates' pull requests reviewed | **12**, covering **all four** teammates |
+| Weeks documented to this standard | **7** |
+
+The one withdrawn pull request is counted here on purpose. PIL-305 stopped in a
+shippable state — 14 strict TDD commits, CI and SonarCloud green — and was
+closed because the feature was not going to be used. Quantity that did not ship
+is still quantity spent, and hiding it would make the other nineteen look
+cheaper than they were.

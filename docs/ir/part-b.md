@@ -14,18 +14,21 @@ and nothing is claimed before it exists.
 | [Sprint 2 · Week 1](b/s2-w1.md) | 12–16 Oct | Cross-origin custom headers in the backend (PIL-354), Pengurus schedule on the web (PIL-339) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 2 · Week 2](b/s2-w2.md) | 13–19 Oct | Jenis sampah and harga on the web (PIL-338), and the panel-breakpoint defect PIL-339 shipped | B1 B2 B3 B5 B7 |
 | [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B2 B6 B7 |
+| [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B1 B2 B3 B6 B7 |
 
 Later weeks are not listed until they have something in them.
 
-!!! note "Sprint 3 · Week 1 claims B2, B6 and B7, and holds back the rest"
-    Its two PIL-432 pull requests were still open when the claim window closed,
-    so the evidence that depends on their merged state — the coverage figure,
-    the merge-request count, the quality numbers on merged code — is not
-    reported yet rather than reported early. B4 is left unclaimed although two
-    fresh reviews exist for it, and B6 is reported with **no new OWASP item**,
-    because none was named in a commit body this week. The page says both in
-    its own words.
+!!! note "Sprint 3 · Week 1 reports B1, B2 and B3 per pull request"
+    The three pull requests differ in kind — a primitive built test-first, a
+    refactor under an existing suite, and a removal — so B1, B2 and B3 are
+    split per pull request in tabs rather than blended. Two of the three were
+    still open when the window closed, so those figures are the state at the
+    window's end rather than at merge.
+
+    B4 is left unclaimed although two fresh reviews exist for it, B5 would only
+    restate figures already quoted, and B6 is reported with **no new OWASP
+    item**, because none was named in a commit body this week. The page says
+    each of those in its own words.
 
 !!! info "Two of the week headings are reporting slots, not claim windows"
     The claim windows are now fixed: Sprint 2 ran **6–12 Oct** (Week 1),

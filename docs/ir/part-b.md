@@ -14,16 +14,18 @@ and nothing is claimed before it exists.
 | [Sprint 2 · Week 1](b/s2-w1.md) | 12–16 Oct | Cross-origin custom headers in the backend (PIL-354), Pengurus schedule on the web (PIL-339) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 2 · Week 2](b/s2-w2.md) | 13–19 Oct | Jenis sampah and harga on the web (PIL-338), and the panel-breakpoint defect PIL-339 shipped | B1 B2 B3 B5 B7 |
 | [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B7 |
+| [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B2 B6 B7 |
 
 Later weeks are not listed until they have something in them.
 
-!!! note "Sprint 3 · Week 1 claims B7 only"
+!!! note "Sprint 3 · Week 1 claims B2, B6 and B7, and holds back the rest"
     Its two PIL-432 pull requests were still open when the claim window closed,
-    so the B1–B6 evidence that depends on their merged state is not reported
-    yet rather than reported early. PIL-436 merged inside the window and its
-    evidence is held with them, because the two tickets were worked in the same
-    week and the same sessions. The page says so in its own words.
+    so the evidence that depends on their merged state — the coverage figure,
+    the merge-request count, the quality numbers on merged code — is not
+    reported yet rather than reported early. B4 is left unclaimed although two
+    fresh reviews exist for it, and B6 is reported with **no new OWASP item**,
+    because none was named in a commit body this week. The page says both in
+    its own words.
 
 !!! info "Two of the week headings are reporting slots, not claim windows"
     The claim windows are now fixed: Sprint 2 ran **6–12 Oct** (Week 1),

@@ -15,6 +15,8 @@ and nothing is claimed before it exists.
 | [Sprint 2 · Week 2](b/s2-w2.md) | 13–19 Oct | Jenis sampah and harga on the web (PIL-338), and the panel-breakpoint defect PIL-339 shipped | B1 B2 B3 B5 B7 |
 | [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 3 · Week 2](b/s3-w2.md) | 3–9 Nov | The pencairan creation flow locked behind the menus that were already gone (PIL-434) and the required-field markers in the setoran forms (PIL-479), both merged | B1 B2 B3 B4 B5 B6 B7 |
+| [Sprint 3 · Week 3](b/s3-w3.md) | 10–16 Nov | Tanggal lahir made optional for a nasabah, across both repositories (PIL-478, both halves merged) | B1 B2 B3 B5 B7 |
 
 Later weeks are not listed until they have something in them.
 
@@ -29,10 +31,28 @@ Later weeks are not listed until they have something in them.
     commit body this week, and the page says so rather than filling the
     criterion with an affirmative sentence.
 
+!!! note "Sprint 3 · Week 3 leaves two criteria empty, and B1 reports a gap"
+    **B4 and B6 are empty** on that page. No peer review was given inside the
+    10–16 Nov window, and no OWASP item was named in a commit body on either
+    half of PIL-478. Each is left empty with one line saying why.
+
+    **B1 there reports a real regression** rather than working around it: the
+    implementation and its tests arrive in the same commits, so the
+    red-green-refactor order is not provable from that ticket's history. The
+    coverage, the case inventory and a reviewer's mutation run are all on
+    record; the commit discipline the earlier weeks demonstrate is not.
+
 !!! info "Two of the week headings are reporting slots, not claim windows"
     The claim windows are now fixed: Sprint 2 ran **6–12 Oct** (Week 1),
-    **13–19 Oct** (Week 2) and **20–26 Oct** (Week 3), and Sprint 3 Week 1 is
-    **27 Oct – 2 Nov**. Those three pages sit exactly in theirs.
+    **13–19 Oct** (Week 2) and **20–26 Oct** (Week 3), and Sprint 3 runs
+    **27 Oct – 2 Nov**, **3–9 Nov** and **10–16 Nov**. All six of those pages
+    sit in theirs.
+
+    Two pull requests cross a boundary and each is claimed once, on the page
+    that says so: PIL-479 was raised 9 Nov and merged 11 Nov, and is reported
+    on **Sprint 3 · Week 2** with its final post-merge figures; PIL-478 was
+    also raised 9 Nov and merged 11 Nov, and is reported on **Sprint 3 ·
+    Week 3**, the window it landed in.
 
     The two earlier pages do not, and are left as submitted rather than
     retrofitted: **Sprint 1 · Week 3** reports work done 6–12 Oct, and
@@ -47,7 +67,8 @@ Sprint 1 · Week 1 claims no B4, because no peer review happened in it, and
 Sprint 2 · Week 2 claims none because its two reviews are reported on the
 adjacent page. Sprint 2 · Week 2 also claims no B6: PIL-338 had no honest OWASP
 claim to make. An empty criterion is left empty rather than filled with an
-affirmative comment.
+affirmative comment. Sprint 3 · Week 3 claims neither B4 nor B6, for the same
+reason in both cases: there was nothing to put in them.
 
 ## Deep dives
 

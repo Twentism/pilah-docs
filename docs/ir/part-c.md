@@ -182,6 +182,13 @@ I had published days earlier and not re-checked.
     time. Three strikes for one remedy, each softer than the last, which is
     evidence the remedy does not hold rather than evidence it is improving.
 
+    **The remedy was the one in the checklist: choose the item while planning
+    the slice, not at commit time.** On
+    [Sprint 3 · Week 3](b/s3-w3.md#b6-security) A08 is named in all five
+    commit bodies of the pull request that fixes it, which is the same item this entry
+    records missing. One later instance is not a habit, so it is reported as
+    one instance.
+
 What connects these: every one came from inferring a conclusion that was cheap
 to check directly. Logs instead of the screen, a file list instead of a merge
 test, a version number instead of the docs. The habit I am building is to check

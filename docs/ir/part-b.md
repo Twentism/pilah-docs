@@ -16,7 +16,7 @@ and nothing is claimed before it exists.
 | [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 3 · Week 2](b/s3-w2.md) | 3–9 Nov | The pencairan creation flow locked behind the menus that were already gone (PIL-434) and the required-field markers in the setoran forms (PIL-479), both merged | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 3 · Week 3](b/s3-w3.md) | 10–16 Nov | Tanggal lahir made optional for a nasabah, across both repositories (PIL-478, both halves merged), and two reviews on a teammate's backend pull requests | B1 B2 B3 B4 B5 B7 |
+| [Sprint 3 · Week 3](b/s3-w3.md) | 10–16 Nov | Tanggal lahir made optional for a nasabah, across both repositories (PIL-478, both halves merged); the docs page's CDN files pinned and verified against a ZAP alert (be 174, OWASP A08); two reviews on a teammate's pull requests | B1 B2 B3 B4 B5 B6 B7 |
 
 Later weeks are not listed until they have something in them.
 
@@ -31,15 +31,27 @@ Later weeks are not listed until they have something in them.
     commit body this week, and the page says so rather than filling the
     criterion with an affirmative sentence.
 
-!!! note "Sprint 3 · Week 3 leaves B6 empty, and B1 reports a gap"
-    **B6 is empty** on that page, left empty with one line saying why: no OWASP
-    item was named in a commit body on either half of PIL-478.
+!!! note "Sprint 3 · Week 3 claims all seven, and B1 reports a gap in one of its three pull requests"
+    **B6 is claimed there**, and it is the fifth distinct OWASP item on this
+    site: A08 on be 174, named in all five commit bodies, fixing the Sub Resource
+    Integrity alert the 16 November ZAP scan reported on the API docs page.
+    PIL-478 itself names no item and claims none.
+
+    **B1 reports a real gap, and scopes it.** PIL-478's tests arrive in the
+    same commits as its implementation, so that ticket's red-green order is not
+    provable from its history. be 174 on the same page was built test-first in
+    two red-green pairs, and the two are reported separately rather than
+    averaged.
 
     **B4 there is two reviews given**, on backend pull requests a teammate
     opened on 16 November, at the end of that window, and which I reviewed the
     following morning. They are claimed on that page and are not claimed again
     on a later one. A third review in the same batch is positive-only and is
     not counted.
+
+    Of its three pull requests, two merged inside the window and be 174 was
+    raised on its last day and merged the following morning. The dates are
+    printed beside each one.
 
     **B1 there reports a real regression** rather than working around it: the
     implementation and its tests arrive in the same commits, so the
@@ -205,7 +217,16 @@ so each week marks what I **wrote** against what I am **citing**.
 
 !!! warning "The running total, stated honestly"
     Across every week the distinct items named in commit bodies are **A01,
-    A03, A04 and A05** — **four**, which is still level 1, not level 2.
+    A03, A04, A05 and A08** — **five**, which is what level 2 asks for.
+
+    **A08 (software and data integrity failures) is new in
+    [Sprint 3 · Week 3](b/s3-w3.md#b6-security)**, and it is the item this
+    page previously said it would not pad the count with. It was recorded as a
+    **miss** on [Sprint 1 · Week 3](b/s1-w3.md#b6-security): the code
+    genuinely prevented it, and no commit body said so. It is now named in
+    all five commit bodies on be 174, chosen while the slices were being
+    planned, on an alert a real scan had reported. The count moved because the work
+    did, not because the tally was re-read.
 
     **A03 (Injection / XSS) is new in [Sprint 2 · Week 3](b/s2-w3.md#b6-security)**
     and is the first genuinely new item since Sprint 1: an unauthenticated
@@ -234,7 +255,9 @@ so each week marks what I **wrote** against what I am **citing**.
     [Sprint 2 · Week 3](b/s2-w3.md#where-this-week-lands-in-part-a).
 
     I would still rather report four real items and a scan than pad the count
-    to five.
+    to five, which is what this box said while the total was four. The fifth
+    arrived on its own terms in Sprint 3 · Week 3, three sprints after the
+    same item was recorded as a miss.
 
 ### B7 · how I use AI
 

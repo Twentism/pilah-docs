@@ -16,7 +16,7 @@ and nothing is claimed before it exists.
 | [Sprint 2 · Week 3](b/s2-w3.md) | 20–26 Oct | An unauthenticated reflected XSS fixed, and a Content-Security-Policy per response context — both merged | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 3 · Week 1](b/s3-w1.md) | 27 Oct – 2 Nov | The setoran side sheet on web (PIL-432, two stacked PRs still open) and the Pengumuman entry points removed (PIL-436, merged) | B1 B2 B3 B4 B5 B6 B7 |
 | [Sprint 3 · Week 2](b/s3-w2.md) | 3–9 Nov | The pencairan creation flow locked behind the menus that were already gone (PIL-434) and the required-field markers in the setoran forms (PIL-479), both merged | B1 B2 B3 B4 B5 B6 B7 |
-| [Sprint 3 · Week 3](b/s3-w3.md) | 10–16 Nov | Tanggal lahir made optional for a nasabah, across both repositories (PIL-478, both halves merged) | B1 B2 B3 B5 B7 |
+| [Sprint 3 · Week 3](b/s3-w3.md) | 10–16 Nov | Tanggal lahir made optional for a nasabah, across both repositories (PIL-478, both halves merged), and two reviews on a teammate's backend pull requests | B1 B2 B3 B4 B5 B7 |
 
 Later weeks are not listed until they have something in them.
 
@@ -31,10 +31,15 @@ Later weeks are not listed until they have something in them.
     commit body this week, and the page says so rather than filling the
     criterion with an affirmative sentence.
 
-!!! note "Sprint 3 · Week 3 leaves two criteria empty, and B1 reports a gap"
-    **B4 and B6 are empty** on that page. No peer review was given inside the
-    10–16 Nov window, and no OWASP item was named in a commit body on either
-    half of PIL-478. Each is left empty with one line saying why.
+!!! note "Sprint 3 · Week 3 leaves B6 empty, and B1 reports a gap"
+    **B6 is empty** on that page, left empty with one line saying why: no OWASP
+    item was named in a commit body on either half of PIL-478.
+
+    **B4 there is two reviews given**, on backend pull requests a teammate
+    opened on 16 November, at the end of that window, and which I reviewed the
+    following morning. They are claimed on that page and are not claimed again
+    on a later one. A third review in the same batch is positive-only and is
+    not counted.
 
     **B1 there reports a real regression** rather than working around it: the
     implementation and its tests arrive in the same commits, so the
@@ -67,8 +72,8 @@ Sprint 1 · Week 1 claims no B4, because no peer review happened in it, and
 Sprint 2 · Week 2 claims none because its two reviews are reported on the
 adjacent page. Sprint 2 · Week 2 also claims no B6: PIL-338 had no honest OWASP
 claim to make. An empty criterion is left empty rather than filled with an
-affirmative comment. Sprint 3 · Week 3 claims neither B4 nor B6, for the same
-reason in both cases: there was nothing to put in them.
+affirmative comment. Sprint 3 · Week 3 claims no B6, for the same reason:
+there was nothing honest to put in it.
 
 ## Deep dives
 

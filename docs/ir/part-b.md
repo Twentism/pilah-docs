@@ -252,7 +252,9 @@ so each week marks what I **wrote** against what I am **citing**.
     level 3 is the ceiling. The re-scan matters for the Part A Secure
     Programming row, which wants the before **and after** of code fixed on the
     basis of a screening — see
-    [Sprint 2 · Week 3](b/s2-w3.md#where-this-week-lands-in-part-a).
+    [Sprint 2 · Week 3](b/s2-w3.md#where-this-week-lands-in-part-a). That
+    re-scan has since been run, on 19 November, and its before and after table
+    is on [Sprint 3 · Week 3](b/s3-w3.md#the-re-scan-on-19-november).
 
     I would still rather report four real items and a scan than pad the count
     to five, which is what this box said while the total was four. The fifth
